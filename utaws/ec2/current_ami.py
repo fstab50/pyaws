@@ -67,8 +67,8 @@ def amazonlinux1(profile, region=None, debug=False, detailed=False):
                         ]
                     }
                 ])
-                metadata[region] = r['Images'][0]
-                amis[region] = r['Images'][0]['ImageId']
+            metadata[region] = r['Images'][0]
+            amis[region] = r['Images'][0]['ImageId']
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
@@ -118,8 +118,8 @@ def amazonlinux2(profile, region=None, debug=False, detailed=False):
                         ]
                     }
                 ])
-                metadata[region] = r['Images'][0]
-                amis[region] = r['Images'][0]['ImageId']
+            metadata[region] = r['Images'][0]
+            amis[region] = r['Images'][0]['ImageId']
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
