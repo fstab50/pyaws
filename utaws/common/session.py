@@ -1,7 +1,7 @@
 import os
 import inspect
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, ProfileNotFound
 
 
 def authenticated(profile):
@@ -37,7 +37,7 @@ def authenticated(profile):
     return False
 
 
-def boto3_session(service, profile=None):
+def boto3_session(service, region=DEFAULT_REGION, profile=None):
     """
     Summary:
         Establishes boto3 sessions, client
@@ -50,12 +50,12 @@ def boto3_session(service, profile=None):
     try:
         if profile:
             if profile == 'default':
-                client = boto3.client(service)
+                client = boto3.client(service, region_name=region)
             else:
                 session = boto3.Session(profile_name=profile)
-                client = session.client(service)
+                client = session.client(service, region_name=region)
         else:
-            client = boto3.client(service)
+            client = boto3.client(service, region_name=region)
     except ClientError as e:
         logger.exception(
             "%s: IAM user or role not found (Code: %s Message: %s)" %

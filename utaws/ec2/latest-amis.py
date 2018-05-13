@@ -5,26 +5,24 @@ import os
 import sys
 import json
 import inspect
-import logging
 import boto3
 from botocore.exceptions import ClientError
-from .common import authenticated
-from .script_utils import stdout_message
+from utaws.common.session import authenticated, boto3_session
+from utaws.common.script_utils import stdout_message
+from utaws import loggers
 
 try:
-    from .oscodes_unix import exit_codes
+    from utaws.common.oscodes_unix import exit_codes
 except Exception:
-    from .oscodes_win import exit_codes    # non-specific os-safe codes
+    from utaws.common.oscodes_win import exit_codes    # non-specific os-safe codes
 
 # globals
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
-session = boto3.Session(profile_name='gcreds-da-atos')
+logger = loggers.getLogger()
 
 
 def get_regions():
     """ Return list of all regions """
+
     client = session.client('ec2')
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
@@ -68,6 +66,7 @@ def amazonlinux2(profile=None):
     latest = {}
     for region in regions:
         try:
+            client = boto3_session(service='ec2', profile=profile)
             client = session.client('ec2', region_name=region)
             r = client.describe_images(
                 Owners=['amazon'],

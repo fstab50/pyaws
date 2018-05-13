@@ -1,4 +1,5 @@
-from _version import __version__ as version
+from utaws._version import __version__ as version
+from utaws import environment
 
 __author__ = 'Blake Huber'
 __version__ = version
