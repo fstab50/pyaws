@@ -3,6 +3,7 @@ import inspect
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
 
+DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
 def authenticated(profile):
     """

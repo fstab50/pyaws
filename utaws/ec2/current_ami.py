@@ -104,13 +104,6 @@ def amazonlinux2(profile, debug=False):
             raise e
     return latest
 
-def main(imageType, profile, debug):
-    """ Calls appropriate ami function """
-    if args.image in ('amazonlinux1', 'aml1'):
-        success = amazonlinux1(profile=profile, debug=debug)
-    elif args.image in ('amazonlinux2', 'aml2'):
-        success = amazonlinux2(profile=profile, debug=debug)
-
 
 def options(parser, help_menu=True):
     """
@@ -159,7 +152,7 @@ def init_cli():
         elif RETURN_FORMAT == 'file' and args.filename:
             export_json_object(dict_obj=latest, filename=args.filename)
             sys.exit(exit_codes['EX_OK']['Code'])
-            
+
         elif RETURN_FORMAT == 'list':
             return latest
     else:
