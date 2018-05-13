@@ -21,7 +21,7 @@ except Exception:
 logger = loggers.getLogger()
 VALID_AMIS = ('amazonlinux1', 'amazonlinux2', 'aml1', 'aml2', 'redhat', 'kali')
 VALID_FORMATS = ('stdout', 'file', 'list')
-
+DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
 def get_regions(profile):
     """ Return list of all regions """
@@ -37,7 +37,7 @@ def get_regions(profile):
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
-def amazonlinux1(profile, region=None, debug=False, detailed=False):
+def amazonlinux1(profile, region=DEFAULT_REGION, debug=False, detailed=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     Args:
@@ -84,7 +84,7 @@ def amazonlinux1(profile, region=None, debug=False, detailed=False):
     return amis
 
 
-def amazonlinux2(profile, region=None, debug=False, detailed=False):
+def amazonlinux2(profile, region=DEFAULT_REGION, debug=False, detailed=False):
     """
     Return latest current amazonlinux v2 AMI for each region
     Args:
@@ -115,6 +115,53 @@ def amazonlinux2(profile, region=None, debug=False, detailed=False):
                         'Values': [
                             'amzn2-ami-hvm-????.??.?.2018????.?-x86_64-gp2',
                             'amzn2-ami-hvm-????.??.?.2018????-x86_64-gp2'
+                        ]
+                    }
+                ])
+            metadata[region] = r['Images'][0]
+            amis[region] = r['Images'][0]['ImageId']
+        except ClientError as e:
+            logger.exception(
+                '%s: Boto error while retrieving AMI data (%s)' %
+                (inspect.stack()[0][3], str(e)))
+            continue
+        except Exception as e:
+            logger.exception(
+                '%s: Unknown Exception occured while retrieving AMI data (%s)' %
+                (inspect.stack()[0][3], str(e)))
+            raise e
+    if detailed:
+        return metadata
+    return amis
+
+
+def redhat(profile, region=DEFAULT_REGION, debug=False, detailed=False):
+    """
+    Return latest current amazonlinux v1 AMI for each region
+    Args:
+        :profile (str): profile_name
+        :region (str): if supplied as parameter, only the ami for the single
+        region specified is returned
+    Returns:
+        amis, TYPE: list:  container for metadata dict for most current instance in region
+    """
+    amis, metadata = {}, {}
+    if region:
+        regions = [region]
+    else:
+        regions = get_regions(profile=profile)
+
+    # retrieve ami for each region in list
+    for region in regions:
+        try:
+            client = boto3_session(service='ec2', region=region, profile=profile)
+            r = client.describe_images(
+                Owners=['amazon'],
+                Filters=[
+                    {
+                        'Name': 'name',
+                        'Values': [
+
                         ]
                     }
                 ])
