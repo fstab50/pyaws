@@ -42,9 +42,9 @@ def amazonlinux1(profile, debug=False):
     Return latest current amazonlinux v1 AMI for each region
     """
     latest = {}
-    for region in regions:
+    for region in get_regions(profile=profile):
         try:
-            client = boto3_session(service='ec2', profile=profile)
+            client = boto3_session(service='ec2', region=region, profile=profile)
             r = client.describe_images(
                 Owners=['amazon'],
                 Filters=[
@@ -55,7 +55,7 @@ def amazonlinux1(profile, debug=False):
                         ]
                     }
                 ])
-            latest[region] = r['Images']
+            latest[region] = r['Images'][0]
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
@@ -74,11 +74,11 @@ def amazonlinux2(profile, debug=False):
     Return latest current amazonlinux v1 AMI for each region
     """
     latest = {}
-    for region in regions:
+    for region in get_regions(profile=profile):
         try:
             if not profile:
                 profile = 'default'
-            client = boto3_session(service='ec2', profile=profile)
+            client = boto3_session(service='ec2', region=region, profile=profile)
 
             r = client.describe_images(
                 Owners=['amazon'],
@@ -115,49 +115,69 @@ def options(parser, help_menu=True):
     parser.add_argument("-p", "--profile", nargs='?', default="default", required=False, help="type (default: %(default)s)")
     parser.add_argument("-i", "--image", nargs='?', default='list', type=str, choices=VALID_AMIS, required=False)
     parser.add_argument("-f", "--format", nargs='?', default='list', type=str, choices=VALID_FORMATS, required=False)
+    parser.add_argument("-n", "--filename", nargs='?', default='', type=str, required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     #parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
 
 
-def init_cli():
+def init_cli(profile, image, format='stdout', filename=None, debug=False):
     # parser = argparse.ArgumentParser(add_help=False, usage=help_menu())
-    parser = argparse.ArgumentParser(add_help=True)
-    print('debug is: ' + args.debug)
-    exit(0)
-    try:
-        args = options(parser)
-    except Exception as e:
-        #help_menu()
-        stdout_message(str(e), 'ERROR')
-        sys.exit(exit_codes['EX_OK']['Code'])
+    #kwargs = {'image': 'amazonlinux1'}
+    #if kwargs:
+    #    profile =  kwargs.get('profile') or 'default'
+    #    image = kwargs.get('image')
+    #    format = kwargs.get('format') or 'print'
+    #    filename = kwargs.get('filename') or None
+    #    debug = kwargs.get('debug') or False
+    #else:
+    if __name__ == '__main__':
+        try:
+            parser = argparse.ArgumentParser(add_help=True)
+            args = options(parser)
+        except Exception as e:
+            #help_menu()
+            stdout_message(str(e), 'ERROR')
+            sys.exit(exit_codes['EX_OK']['Code'])
+        # parse parameters
+        profile = args.profile or 'default'
+        image = args.image
+        format = args.format or 'print'
+        filename = args.filename or None
+        debug = args.debug or False
+
+    if debug:
+        print('profile is: ' + profile)
+        print('image type: ' + image)
+        print('format: ' + format)
+        print('debug flag: %b', str(debug))
 
     if len(sys.argv) == 1:
         #help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
-    elif authenticated(profile=args.profile):
+    elif authenticated(profile=profile):
         # execute ami operation
-        if args.image in ('amazonlinux1', 'aml1'):
-            latest = amazonlinux1(profile=args.profile, debug=args.debug)
-        elif args.image in ('amazonlinux2', 'aml2'):
-            latest = amazonlinux2(profile=args.profile, debug=args.debug)
+        if image in ('amazonlinux1', 'aml1'):
+            latest = amazonlinux1(profile=profile, debug=debug)
+        elif image in ('amazonlinux2', 'aml2'):
+            latest = amazonlinux2(profile=profile, debug=debug)
 
         # return appropriate response format
         if RETURN_FORMAT == 'stdout':
             export_json_object(dict_obj=latest)
             sys.exit(exit_codes['EX_OK']['Code'])
 
-        elif RETURN_FORMAT == 'file' and args.filename:
-            export_json_object(dict_obj=latest, filename=args.filename)
+        elif RETURN_FORMAT == 'file' and filename:
+            export_json_object(dict_obj=latest, filename=filename)
             sys.exit(exit_codes['EX_OK']['Code'])
 
         elif RETURN_FORMAT == 'list':
             return latest
     else:
         stdout_message(
-            'Authenication Failed to AWS Account for user %s' % args.profile,
+            'Authenication Failed to AWS Account for user %s' % profile,
             prefix='AUTH',
             severity='WARNING'
             )

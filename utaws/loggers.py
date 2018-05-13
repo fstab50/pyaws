@@ -13,6 +13,7 @@ import logging
 def getLogger(*args, **kwargs):
     """ custom format logger """
     logger = logging.getLogger(*args, **kwargs)
+    logger.setLevel(logging.INFO)
     logger.propagate = False
     if not logger.handlers:
         handler = logging.StreamHandler()
