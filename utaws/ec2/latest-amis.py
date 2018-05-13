@@ -5,10 +5,11 @@ import os
 import sys
 import json
 import inspect
+from pygments import highlight, lexers, formatters
 import boto3
 from botocore.exceptions import ClientError
 from utaws.common.session import authenticated, boto3_session
-from utaws.common.script_utils import stdout_message
+from utaws.common.script_utils import stdout_message, export_json_object
 from utaws import loggers
 
 try:
@@ -18,23 +19,32 @@ except Exception:
 
 # globals
 logger = loggers.getLogger()
+VALID_AMIS = ('amazonlinux1', 'amazonlinux2', 'aml1', 'aml2', 'redhat', 'kali')
+VALID_FORMATS = ('stdout', 'file', 'list')
 
 
-def get_regions():
+def get_regions(profile):
     """ Return list of all regions """
+    try:
+        if not profile:
+            profile = 'default'
+        client = boto3_session(service='ec2', profile=profile)
 
-    client = session.client('ec2')
+    except ClientError as e:
+        logger.exception('%s: Boto error while retrieving regions (%s)' %
+            (inspect.stack()[0][3], str(e)))
+        raise e
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
-def amazonlinux(profile=None):
+def amazonlinux1(profile, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     """
     latest = {}
     for region in regions:
         try:
-            client = session.client('ec2', region_name=region)
+            client = boto3_session(service='ec2', profile=profile)
             r = client.describe_images(
                 Owners=['amazon'],
                 Filters=[
@@ -59,15 +69,17 @@ def amazonlinux(profile=None):
     return latest
 
 
-def amazonlinux2(profile=None):
+def amazonlinux2(profile, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     """
     latest = {}
     for region in regions:
         try:
+            if not profile:
+                profile = 'default'
             client = boto3_session(service='ec2', profile=profile)
-            client = session.client('ec2', region_name=region)
+
             r = client.describe_images(
                 Owners=['amazon'],
                 Filters=[
@@ -92,6 +104,13 @@ def amazonlinux2(profile=None):
             raise e
     return latest
 
+def main(imageType, profile, debug):
+    """ Calls appropriate ami function """
+    if args.image in ('amazonlinux1', 'aml1'):
+        success = amazonlinux1(profile=profile, debug=debug)
+    elif args.image in ('amazonlinux2', 'aml2'):
+        success = amazonlinux2(profile=profile, debug=debug)
+
 
 def options(parser, help_menu=True):
     """
@@ -100,7 +119,10 @@ def options(parser, help_menu=True):
     Returns:
         TYPE: argparse object, parser argument set
     """
-    parser.add_argument("-p", "--profile", nargs='?', default="default",
+    parser.add_argument("-p", "--profile", nargs='?', default="default", required=False, help="type (default: %(default)s)")
+    parser.add_argument("-i", "--image", nargs='?', default='list', type=str, choices=VALID_AMIS, required=False)
+    parser.add_argument("-f", "--format", nargs='?', default='list', type=str, choices=VALID_FORMATS, required=False)
+    parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     #parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
@@ -109,7 +131,8 @@ def options(parser, help_menu=True):
 def init_cli():
     # parser = argparse.ArgumentParser(add_help=False, usage=help_menu())
     parser = argparse.ArgumentParser(add_help=True)
-
+    print('debug is: ' + args.debug)
+    exit(0)
     try:
         args = options(parser)
     except Exception as e:
@@ -122,17 +145,23 @@ def init_cli():
         sys.exit(exit_codes['EX_OK']['Code'])
 
     elif authenticated(profile=args.profile):
-        # execute keyset operation
-        success = main(
-                    operation=args.operation,
-                    profile=args.profile,
-                    user_name=args.username,
-                    auto=args.auto,
-                    debug=args.debug
-                    )
-        if success:
-            logger.info('Job complete')
+        # execute ami operation
+        if args.image in ('amazonlinux1', 'aml1'):
+            latest = amazonlinux1(profile=args.profile, debug=args.debug)
+        elif args.image in ('amazonlinux2', 'aml2'):
+            latest = amazonlinux2(profile=args.profile, debug=args.debug)
+
+        # return appropriate response format
+        if RETURN_FORMAT == 'stdout':
+            export_json_object(dict_obj=latest)
             sys.exit(exit_codes['EX_OK']['Code'])
+
+        elif RETURN_FORMAT == 'file' and args.filename:
+            export_json_object(dict_obj=latest, filename=args.filename)
+            sys.exit(exit_codes['EX_OK']['Code'])
+            
+        elif RETURN_FORMAT == 'list':
+            return latest
     else:
         stdout_message(
             'Authenication Failed to AWS Account for user %s' % args.profile,
@@ -149,4 +178,6 @@ def init_cli():
 
 
 if __name__ == '__main__':
+    RETURN_FORMAT = 'print'
     init_cli()
+    sys.exit(exit_codes['EX_OK']['Code'])
