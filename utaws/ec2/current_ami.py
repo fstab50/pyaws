@@ -37,12 +37,24 @@ def get_regions(profile):
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
-def amazonlinux1(profile, debug=False):
+def amazonlinux1(profile, region=None, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
+    Args:
+        :profile (str): profile_name
+        :region (str): if supplied as parameter, only the ami for the single
+        region specified is returned
+    Returns:
+        latest, TYPE: list:  container for metadata dict for most current instance in region
     """
     latest = {}
-    for region in get_regions(profile=profile):
+    if region:
+        regions = [region]
+    else:
+        regions = get_regions(profile=profile)
+
+    # retrieve ami for each region in list
+    for region in regions:
         try:
             client = boto3_session(service='ec2', region=region, profile=profile)
             r = client.describe_images(
@@ -69,12 +81,24 @@ def amazonlinux1(profile, debug=False):
     return latest
 
 
-def amazonlinux2(profile, debug=False):
+def amazonlinux2(profile, region=None, debug=False):
     """
-    Return latest current amazonlinux v1 AMI for each region
+    Return latest current amazonlinux v2 AMI for each region
+    Args:
+        :profile (str): profile_name
+        :region (str): if supplied as parameter, only the ami for the single
+        region specified is returned
+    Returns:
+        latest, TYPE: list:  container for metadata dict for most current instance in region
     """
     latest = {}
-    for region in get_regions(profile=profile):
+    if region:
+        regions = [region]
+    else:
+        regions = get_regions(profile=profile)
+
+    # retrieve ami for each region in list
+    for region in regions:
         try:
             if not profile:
                 profile = 'default'
