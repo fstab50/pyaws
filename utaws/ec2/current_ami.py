@@ -37,7 +37,7 @@ def get_regions(profile):
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
-def amazonlinux1(profile, region=None, debug=False):
+def amazonlinux1(profile, region=None, debug=False, detailed=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     Args:
@@ -45,9 +45,9 @@ def amazonlinux1(profile, region=None, debug=False):
         :region (str): if supplied as parameter, only the ami for the single
         region specified is returned
     Returns:
-        latest, TYPE: list:  container for metadata dict for most current instance in region
+        amis, TYPE: list:  container for metadata dict for most current instance in region
     """
-    latest = {}
+    amis, metadata = {}, {}
     if region:
         regions = [region]
     else:
@@ -67,7 +67,8 @@ def amazonlinux1(profile, region=None, debug=False):
                         ]
                     }
                 ])
-            latest[region] = r['Images'][0]
+                metadata[region] = r['Images'][0]
+                amis[region] = r['Images'][0]['ImageId']
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
@@ -78,10 +79,12 @@ def amazonlinux1(profile, region=None, debug=False):
                 '%s: Unknown Exception occured while retrieving AMI data (%s)' %
                 (inspect.stack()[0][3], str(e)))
             raise e
-    return latest
+    if detailed:
+        return metadata
+    return amis
 
 
-def amazonlinux2(profile, region=None, debug=False):
+def amazonlinux2(profile, region=None, debug=False, detailed=False):
     """
     Return latest current amazonlinux v2 AMI for each region
     Args:
@@ -89,9 +92,9 @@ def amazonlinux2(profile, region=None, debug=False):
         :region (str): if supplied as parameter, only the ami for the single
         region specified is returned
     Returns:
-        latest, TYPE: list:  container for metadata dict for most current instance in region
+        amis, TYPE: list:  container for metadata dict for most current instance in region
     """
-    latest = {}
+    amis, metadata = {}, {}
     if region:
         regions = [region]
     else:
@@ -115,7 +118,8 @@ def amazonlinux2(profile, region=None, debug=False):
                         ]
                     }
                 ])
-            latest[region] = r['Images']
+                metadata[region] = r['Images'][0]
+                amis[region] = r['Images'][0]['ImageId']
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
@@ -126,7 +130,9 @@ def amazonlinux2(profile, region=None, debug=False):
                 '%s: Unknown Exception occured while retrieving AMI data (%s)' %
                 (inspect.stack()[0][3], str(e)))
             raise e
-    return latest
+    if detailed:
+        return metadata
+    return amis
 
 
 def options(parser, help_menu=True):
