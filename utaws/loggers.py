@@ -9,15 +9,13 @@ Example usage:
 import logging
 
 
-
 def getLogger(*args, **kwargs):
     """ custom format logger """
     logger = logging.getLogger(*args, **kwargs)
-    logger.setLevel(logging.INFO)
     logger.propagate = False
     if not logger.handlers:
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter('%(pathname)s - %(name)s - [%(levelname)s]: %(message)s'))
         logger.addHandler(handler)
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
     return logger

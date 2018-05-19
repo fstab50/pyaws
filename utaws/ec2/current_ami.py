@@ -23,6 +23,7 @@ VALID_AMIS = ('amazonlinux1', 'amazonlinux2', 'aml1', 'aml2', 'redhat', 'kali')
 VALID_FORMATS = ('stdout', 'file', 'list')
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
+
 def get_regions(profile):
     """ Return list of all regions """
     try:
@@ -37,7 +38,7 @@ def get_regions(profile):
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
-def amazonlinux1(profile, region=DEFAULT_REGION, debug=False, detailed=False):
+def amazonlinux1(profile, region=None, detailed=False, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     Args:
@@ -84,7 +85,7 @@ def amazonlinux1(profile, region=DEFAULT_REGION, debug=False, detailed=False):
     return amis
 
 
-def amazonlinux2(profile, region=DEFAULT_REGION, debug=False, detailed=False):
+def amazonlinux2(profile, region=None, detailed=False, debug=False):
     """
     Return latest current amazonlinux v2 AMI for each region
     Args:
@@ -135,7 +136,7 @@ def amazonlinux2(profile, region=DEFAULT_REGION, debug=False, detailed=False):
     return amis
 
 
-def redhat(profile, region=DEFAULT_REGION, debug=False, detailed=False):
+def redhat(profile, region=None, detailed=False, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     Args:
