@@ -86,7 +86,7 @@ def json_tags(resource_list, tag_list, mode=''):
     return True
 
 
-def transform_tag_dict(dict):
+def create_taglist(dict):
     """
     Summary:
         Transforms tag dictionary back into a properly formatted tag list
