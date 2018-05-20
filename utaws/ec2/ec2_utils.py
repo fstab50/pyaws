@@ -25,7 +25,7 @@ import boto3
 from botocore.exceptions import ClientError
 from utaws.common.session import boto3_session
 from utaws.common import loggers
-from utawaws._version import __version__
+from utaws._version import __version__
 
 
 # global objects
