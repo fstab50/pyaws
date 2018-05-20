@@ -2,8 +2,18 @@ import os
 import inspect
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
+from utaws.common.script_utils import stdout_message
+
+try:
+    from utaws.common.oscodes_unix import exit_codes
+    splitchar = '/'     # character for splitting paths (linux)
+except Exception:
+    from utaws.common.oscodes_win import exit_codes    # non-specific os-safe codes
+    splitchar = '\\'    # character for splitting paths (window
+
 
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
+
 
 def authenticated(profile):
     """

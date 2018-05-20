@@ -19,13 +19,13 @@ License:
 """
 import os
 import json
-import datetime
 import socket
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-import loggers
-from _version import __version__
+from utaws.common.session import boto3_session
+from utaws.common import loggers
+from utawaws._version import __version__
 
 
 # global objects
@@ -60,6 +60,20 @@ def get_instances(region, profile=None):
             e.response['Error']['Message']))
         raise e
     return vm_ids
+
+
+def get_regions(profile):
+    """ Return list of all regions """
+    try:
+        if not profile:
+            profile = 'default'
+        client = boto3_session(service='ec2', profile=profile)
+
+    except ClientError as e:
+        logger.exception('%s: Boto error while retrieving regions (%s)' %
+            (inspect.stack()[0][3], str(e)))
+        raise e
+    return [x['RegionName'] for x in client.describe_regions()['Regions']]
 
 
 def dns_hostname(instanceId, profile='default'):
