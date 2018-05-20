@@ -136,6 +136,7 @@ def calc_runtime(start, end):
     else:
         return (duration.seconds / 60), 'minutes'
 
+
 # -- main ---------------------------------------------------------------------
 
 

@@ -7,6 +7,7 @@ import boto3
 
 # -- functions  ----------------------------------------------------------------
 
+
 def get_regions():
     """Summary
 
@@ -23,7 +24,8 @@ def remove_tags(id_list, tag_list):
     """
     Deletes tags on resource ids provided as parameter
     """
-
+    pass
+    
 
 def clean_list(list):
     """ cleans a list of all extraneous characters """
@@ -31,7 +33,7 @@ def clean_list(list):
     try:
         for element in list:
             clean_list.append(element.strip())
-    except:
+    except Exception:
         return -1
     return clean_list
 
@@ -58,7 +60,7 @@ def remove_duplicates(list):
             else:
                 clean_list.append(item)
         return clean_list
-    except:
+    except Exception:
         return -1
     return clean_list
 
@@ -74,7 +76,7 @@ def remove_restricted(list):
         for dict in list:
             if 'aws' not in dict['Key']:
                 clean_list.append(dict)
-    except:
+    except Exception:
         return -1
     return clean_list
 
@@ -115,7 +117,7 @@ try:
 
 except IOError as e:
     print('File passed as parameter cannot be opened')
-except:
+except Exception:
     print("Unexpected error:", sys.exc_info()[0])
     raise
 
