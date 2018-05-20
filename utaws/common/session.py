@@ -3,6 +3,8 @@ import inspect
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
 from utaws.common.script_utils import stdout_message
+from utaws.common import loggers
+from utaws._version import __version__
 
 try:
     from utaws.common.oscodes_unix import exit_codes
@@ -13,6 +15,7 @@ except Exception:
 
 
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
+logger = loggers.getLogger(__version__)
 
 
 def authenticated(profile):
