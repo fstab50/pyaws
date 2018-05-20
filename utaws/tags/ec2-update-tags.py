@@ -25,7 +25,7 @@ def remove_tags(id_list, tag_list):
     Deletes tags on resource ids provided as parameter
     """
     pass
-    
+
 
 def clean_list(list):
     """ cleans a list of all extraneous characters """
@@ -178,22 +178,9 @@ for PROFILE in accounts:
 
             # convert tag keys
             for t in tags:
-                if 'MPC-SN-NAME' == t['Key'] or 'Contact' == t['Key']:
+                if t.get('MPC-SN-NAME'):
                     delete_tags.append(t)
                     tags.remove(t)
-                    #change_record.append(instance.id)
-
-                elif 'Owner' == t['Key']:
-                    # we create a copy of the dict to break link when t is updated
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-OWNER'
-                    #change_record.append(instance.id)
-
-                elif 'PrincipalId' in t['Key']:
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-PRINCIPALID'
                     #change_record.append(instance.id)
 
                 elif 'CreationDate' in t['Key']:
@@ -212,30 +199,6 @@ for PROFILE in accounts:
                     d = t.copy()
                     delete_tags.append(d)
                     t['Key'] = 'MPC-AWS-BACKUP'
-                    #change_record.append(instance.id)
-
-                elif 'BUSINESSPURPOSE' in t['Key'] or 'SN-BUSINESSPURPOSE' in t['Key']:
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-BUSINESSPURPOSE'
-                    #change_record.append(instance.id)
-
-                elif 'Environment' in t['Key']:
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-ENVIRONMENT'
-                    #change_record.append(instance.id)
-
-                elif 'Business Owner' == t['Key']:
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-BUSINESSOWNER'
-                    #change_record.append(instance.id)
-
-                elif 'Project' in t['Key']:
-                    d = t.copy()
-                    delete_tags.append(d)
-                    t['Key'] = 'MPC-AWS-PROJECT'
                     #change_record.append(instance.id)
 
             # output results
