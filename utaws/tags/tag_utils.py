@@ -5,12 +5,27 @@ import os
 import sys
 import json
 import inspect
-import boto3
-from botocore.exceptions import ClientError
+from pygments import highlight, lexers, formatters
 from utaws.common import loggers
 from utaws import __version__
 
 logger = loggers.getLogger(__version__)
+
+
+def create_taglist(dict):
+    """
+    Summary:
+        Transforms tag dictionary back into a properly formatted tag list
+    Returns:
+        tags, TYPE: list
+    """
+    tags = []
+    for k, v in dict.items():
+        temp = {}
+        temp['Key'] = k
+        temp['Value'] = v
+        tags.append(temp)
+    return tags
 
 
 def filter_tags(tag_list, *args):
@@ -26,9 +41,45 @@ def filter_tags(tag_list, *args):
 
     for tag in tag_list:
         for arg in args:
-            if arg in tag['Key']:
+            if arg == tag['Key']:
                 clean.remove(tag)
     return clean
+
+
+def json_tags(resource_list, tag_list, mode=''):
+    """
+        - Prints tag keys, values applied to resources
+        - output: cloudwatch logs
+        - mode:  INFO, DBUG, or UNKN (unknown or not provided)
+    """
+    if mode == 0:
+        mode_text = 'DBUG'
+    else:
+        mode_text = 'INFO'
+
+    try:
+        for resource in resource_list:
+            if mode == 0:
+                logger.debug('DBUGMODE enabled - Print tags found on resource %s:' % str(resource))
+            else:
+                logger.info('Tags found resource %s:' % str(resource))
+            print(json.dumps(tag_list, indent=4, sort_keys=True))
+    except Exception as e:
+        logger.critical(
+            "%s: problem printing tag keys or values to cw logs: %s" %
+            (inspect.stack()[0][3], str(e)))
+        return False
+    return True
+
+
+def pretty_print_tags(tag_list):
+    """ prints json tags with syntax highlighting """
+    json_str = json.dumps(tag_list, indent=4, sort_keys=True)
+    print(highlight(
+        json_str, lexers.JsonLexer(), formatters.TerminalFormatter()
+        ))
+    print('\n')
+    return
 
 
 def print_tags(resource_list, tag_list, mode=''):
@@ -60,42 +111,24 @@ def print_tags(resource_list, tag_list, mode=''):
     return 0
 
 
-def json_tags(resource_list, tag_list, mode=''):
+def select_tags(tag_list, key_list):
     """
-        - Prints tag keys, values applied to resources
-        - output: cloudwatch logs
-        - mode:  INFO, DBUG, or UNKN (unknown or not provided)
+    Return selected tags from a list of many tags given a tag key
     """
-    if mode == 0:
-        mode_text = 'DBUG'
-    else:
-        mode_text = 'INFO'
+    select_list = []
+    # select tags by keys in key_list
+    for tag in tag_list:
+        for key in key_list:
+            if key == tag['Key']:
+                select_list.append(tag)
+    # ensure only tag-appropriate k,v pairs in list
+    clean = [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
+    return clean
 
-    try:
-        for resource in resource_list:
-            if mode == 0:
-                logger.debug('DBUGMODE enabled - Print tags found on resource %s:' % str(resource))
-            else:
-                logger.info('Tags found resource %s:' % str(resource))
-            print(json.dumps(tag_list, indent=4, sort_keys=True))
-    except Exception as e:
-        logger.critical(
-            "%s: problem printing tag keys or values to cw logs: %s" %
-            (inspect.stack()[0][3], str(e)))
-        return False
+
+def valid_tags(tag_list):
+    """ checks tags for invalid chars """
+    for tag in tag_list:
+        if ':' in tag['Key']:
+            return False
     return True
-
-
-def create_taglist(dict):
-    """
-    Summary:
-        Transforms tag dictionary back into a properly formatted tag list
-    Returns:
-        tags, TYPE: list
-    """
-    tags, temp = [], {}
-    for k, v in dict:
-        temp['Key'] = k
-        temp['Value'] = v
-        tags.append(temp)
-    return tags
