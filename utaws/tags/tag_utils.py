@@ -111,6 +111,49 @@ def print_tags(resource_list, tag_list, mode=''):
     return 0
 
 
+def remove_duplicates(list):
+    """
+    Removes duplicate dict in a list of dict by enforcing unique keys
+    """
+
+    clean_list, key_list = [], []
+
+    try:
+        for dict in list:
+            if dict['Key'] not in key_list:
+                clean_list.append(dict)
+                key_list.append(dict['Key'])
+
+    except KeyError:
+        # dedup list of items, not dict
+        for item in list:
+            if clean_list:
+                if item not in clean_list:
+                    clean_list.append(item)
+            else:
+                clean_list.append(item)
+        return clean_list
+    except Exception:
+        return -1
+    return clean_list
+
+
+def remove_restricted(list):
+    """
+    Remove restricted Amazon tags from list of tags
+    """
+
+    clean_list = []
+
+    try:
+        for dict in list:
+            if 'aws' not in dict['Key']:
+                clean_list.append(dict)
+    except Exception:
+        return -1
+    return clean_list
+
+
 def select_tags(tag_list, key_list):
     """
     Return selected tags from a list of many tags given a tag key
