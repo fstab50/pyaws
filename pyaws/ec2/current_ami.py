@@ -8,14 +8,14 @@ import inspect
 from pygments import highlight, lexers, formatters
 import boto3
 from botocore.exceptions import ClientError
-from pyaws.common.session import authenticated, boto3_session
-from pyaws.common.script_utils import stdout_message, export_json_object
+from pyaws.core.session import authenticated, boto3_session
+from pyaws.core.script_utils import stdout_message, export_json_object
 from pyaws import loggers
 
 try:
-    from pyaws.common.oscodes_unix import exit_codes
+    from pyaws.core.oscodes_unix import exit_codes
 except Exception:
-    from pyaws.common.oscodes_win import exit_codes    # non-specific os-safe codes
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
 
 # globals
 logger = loggers.getLogger()

@@ -6,7 +6,7 @@ import sys
 import json
 import inspect
 from pygments import highlight, lexers, formatters
-from pyaws.common import loggers
+from pyaws.core import loggers
 from pyaws import __version__
 
 logger = loggers.getLogger(__version__)

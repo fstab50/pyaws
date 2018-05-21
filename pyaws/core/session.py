@@ -2,15 +2,15 @@ import os
 import inspect
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
-from pyaws.common.script_utils import stdout_message
-from pyaws.common import loggers
+from pyaws.core.script_utils import stdout_message
+from pyaws.core import loggers
 from pyaws._version import __version__
 
 try:
-    from pyaws.common.oscodes_unix import exit_codes
+    from pyaws.core.oscodes_unix import exit_codes
     splitchar = '/'     # character for splitting paths (linux)
 except Exception:
-    from pyaws.common.oscodes_win import exit_codes    # non-specific os-safe codes
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
     splitchar = '\\'    # character for splitting paths (window
 
 
