@@ -1,5 +1,5 @@
 * * * 
-# README - utaws.tags 
+# README - pyaws.tags 
 * * *
 
 ## Purpose

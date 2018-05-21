@@ -1,4 +1,4 @@
-PROJECT := utaws
+PROJECT := pyaws
 CUR_DIR = $(shell pwd)
 PYTHON_VERSION := python3
 PYTHON3_PATH := $(shell which $(PYTHON_VERSION))

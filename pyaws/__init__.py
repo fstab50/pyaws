@@ -1,5 +1,5 @@
-from utaws._version import __version__ as version
-from utaws import environment
+from pyaws._version import __version__ as version
+from pyaws import environment
 
 __author__ = 'Blake Huber'
 __version__ = version

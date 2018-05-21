@@ -23,9 +23,9 @@ import socket
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-from utaws.common.session import boto3_session
-from utaws.common import loggers
-from utaws._version import __version__
+from pyaws.common.session import boto3_session
+from pyaws.common import loggers
+from pyaws._version import __version__
 
 
 # global objects

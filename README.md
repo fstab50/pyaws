@@ -1,5 +1,5 @@
 * * *
-# utaws | Utilities for Amazon Web Services
+# pyaws | Utilities for Amazon Web Services
 * * *
 
 ## Summary

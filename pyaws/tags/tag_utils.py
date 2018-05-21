@@ -1,13 +1,13 @@
 """
-utaws.tags:  Tag Utilities
+pyaws.tags:  Tag Utilities
 """
 import os
 import sys
 import json
 import inspect
 from pygments import highlight, lexers, formatters
-from utaws.common import loggers
-from utaws import __version__
+from pyaws.common import loggers
+from pyaws import __version__
 
 logger = loggers.getLogger(__version__)
 
