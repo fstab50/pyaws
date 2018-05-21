@@ -38,8 +38,7 @@ requires = [
     'Pygments',
     'pytz',
     's3transfer',
-    'six',
-    'tqdm'
+    'six'
 ]
 
 
