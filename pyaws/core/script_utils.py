@@ -24,8 +24,8 @@ import re
 import logging
 import inspect
 from pygments import highlight, lexers, formatters
-from keyup.colors import Colors
-from keyup import __version__
+from pyaws.core.colors import Colors
+from pyaws import __version__
 
 # globals
 MODULE_VERSION = '1.11'
