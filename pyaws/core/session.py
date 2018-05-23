@@ -19,7 +19,7 @@ DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 logger = loggers.getLogger(__version__)
 
 
-def profile_prefix(profile_name):
+def profile_prefix(profile):
     """
     Summary:
         Determines if temp credential used;
