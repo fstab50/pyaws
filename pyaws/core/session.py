@@ -1,5 +1,6 @@
 import os
 import inspect
+import subprocess
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
 from pyaws.core.script_utils import stdout_message
