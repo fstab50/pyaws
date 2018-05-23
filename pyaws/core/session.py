@@ -18,6 +18,28 @@ DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 logger = loggers.getLogger(__version__)
 
 
+def profile_prefix(profile):
+    """
+    Summary:
+        Determines if temp credential used;
+        - if yes, returns profile with correct prefix
+        - if no, returns profile (profile_name) unaltered
+    Returns:
+        awscli profilename, TYPE str
+    """
+    try:
+        if subprocess.getoutput(f'aws configure get profile.{profile}.aws_access_key_id 2>/dev/null'):
+            return profile
+        elif subprocess.getoutput(f'aws configure get profile.{PREFIX + profile}.aws_access_key_id 2>/dev/null'):
+            return PREFIX + profile
+    except Exception as e:
+        logger.exception(
+            f'{inspect.stack()[0][3]}: Unknown error while interrogating local awscli config: {e}'
+            )
+        raise
+    return None
+
+
 def boto3_session(service, region=DEFAULT_REGION, profile=None):
     """
     Summary:
