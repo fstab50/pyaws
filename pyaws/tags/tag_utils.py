@@ -79,7 +79,7 @@ def pretty_print_tags(tag_list):
         json_str, lexers.JsonLexer(), formatters.TerminalFormatter()
         ))
     print('\n')
-    return
+    return True
 
 
 def print_tags(resource_list, tag_list, mode=''):

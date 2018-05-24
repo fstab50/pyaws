@@ -19,19 +19,24 @@ DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 logger = loggers.getLogger(__version__)
 
 
-def profile_prefix(profile):
+def profile_prefix(profile, prefix='gcreds'):
     """
     Summary:
         Determines if temp credential used;
         - if yes, returns profile with correct prefix
         - if no, returns profile (profile_name) unaltered
+    Args:
+        profile (str): profile_name of a valid profile from local awscli config
+        prefix (str): prefix prepended to profile containing STS temporary credentials
     Returns:
         awscli profilename, TYPE str
     """
+    stderr = ' 2>/dev/null'
+    tempProfile = prefix + '-' + profile
     try:
-        if subprocess.getoutput(f'aws configure get profile.{profile}.aws_access_key_id 2>/dev/null'):
+        if subprocess.getoutput(f'aws configure get profile.{profile}.aws_access_key_id {stderr}'):
             return profile
-        elif subprocess.getoutput(f'aws configure get profile.{PREFIX + profile}.aws_access_key_id 2>/dev/null'):
+        elif subprocess.getoutput(f'aws configure get profile.{tempProfile}.aws_access_key_id {stderr}'):
             return PREFIX + profile
     except Exception as e:
         logger.exception(
