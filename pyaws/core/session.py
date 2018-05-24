@@ -37,7 +37,7 @@ def profile_prefix(profile, prefix='gcreds'):
         if subprocess.getoutput(f'aws configure get profile.{profile}.aws_access_key_id {stderr}'):
             return profile
         elif subprocess.getoutput(f'aws configure get profile.{tempProfile}.aws_access_key_id {stderr}'):
-            return PREFIX + profile
+            return tempProfile
     except Exception as e:
         logger.exception(
             f'{inspect.stack()[0][3]}: Unknown error while interrogating local awscli config: {e}'
