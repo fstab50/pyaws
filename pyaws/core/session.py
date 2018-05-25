@@ -25,6 +25,7 @@ def profile_prefix(profile, prefix='gcreds'):
         Determines if temp credential used;
         - if yes, returns profile with correct prefix
         - if no, returns profile (profile_name) unaltered
+        - Note:  Caller is process_profiles(), Not to be called directly
     Args:
         profile (str): profile_name of a valid profile from local awscli config
         prefix (str): prefix prepended to profile containing STS temporary credentials
@@ -44,6 +45,22 @@ def profile_prefix(profile, prefix='gcreds'):
             )
         raise
     return None
+
+
+def process_profiles(profiles):
+    """
+    Parse list of roles (or single role name) given as parameter
+        - detects if a single profilename given or a list of profiles
+        - applies prefix for temp credentials if detected
+    """
+    profile_list = []
+    if os.path.isfile(profiles):
+        with open(profiles) as f1:
+            for line in f1:
+                profile_list.append(profile_prefix(line.strip()))
+    else:
+        profile_list = [profile_prefix(profiles.strip())]
+    return profile_list
 
 
 def boto3_session(service, region=DEFAULT_REGION, profile=None):
