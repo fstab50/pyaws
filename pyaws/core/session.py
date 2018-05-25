@@ -49,9 +49,12 @@ def profile_prefix(profile, prefix='gcreds'):
 
 def process_profiles(profiles):
     """
-    Parse list of roles (or single role name) given as parameter
-        - detects if a single profilename given or a list of profiles
-        - applies prefix for temp credentials if detected
+    Summary:
+        Parse list of roles (or single role name) given as parameter
+            - detects if a single profilename given or a list of profiles
+            - applies prefix for temp credentials if detected
+    Returns:
+        list of awscli profile names, TYPE: list
     """
     profile_list = []
     if os.path.isfile(profiles):
