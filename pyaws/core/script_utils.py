@@ -413,16 +413,19 @@ def read_local_config(cfg):
 
 
 def stdout_message(message, prefix='INFO', quiet=False,
-                                    multiline=False, tabspaces=4, severity=''):
-    """ Prints message to cli stdout while indicating type and severity
+                                    multiline=False, indent=4, severity=''):
+    """
+    Summary:
+        Prints message to cli stdout while indicating type and severity
 
     Args:
         :message (str): text characters to be printed to stdout
         :prefix (str):  4-letter string message type identifier.
         :quiet (bool):  Flag to suppress all output
-        :multiline (bool): indicates multiline message; removes blank lines on
-         either side of printed message
-        :tabspaces (int): left justified number of spaces
+        :multiline (bool): indicates multiline message; removes blank lines
+            on either side of printed message
+        :indent (int): left justified number of spaces to indent before
+            printing message ouput
         :severity (str): header msg determined color instead of prefix
 
     .. code-block:: python
@@ -438,7 +441,7 @@ def stdout_message(message, prefix='INFO', quiet=False,
         TYPE: bool, Success (printed) | Failure (no output)
     """
     prefix = prefix.upper()
-    tabspaces = int(tabspaces)
+    tabspaces = int(indent)
     # prefix color handling
     choices = ('RED', 'BLUE', 'WHITE', 'GREEN', 'ORANGE')
     critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
