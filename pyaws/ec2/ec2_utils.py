@@ -124,7 +124,6 @@ def dns_hostname(instanceId, profile='default'):
                 [priv_ip]
             )
         """
-        return public_name or private_name
     except KeyError as e:
         logger.exception('%s: KeyError parsing ip info (%s)' % (inspect.stack()[0][3], str(e)))
         return ('', [], '', [])
@@ -135,3 +134,4 @@ def dns_hostname(instanceId, profile='default'):
         logger.exception(
             '%s: No dns info from reverse lookup - Unknown host' % inspect.stack()[0][3])
         return ('', [], '', [ip_info['PrivateIpAddress']])
+    return public_name or private_name
