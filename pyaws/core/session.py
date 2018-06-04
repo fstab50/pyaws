@@ -98,7 +98,6 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
             (inspect.stack()[0][3], profile))
         stdout_message(msg, 'FAIL')
         logger.warning(msg)
-        sys.exit(exit_codes['EX_NOUSER']['Code'])
     return client
 
 
