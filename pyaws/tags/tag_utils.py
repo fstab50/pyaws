@@ -250,9 +250,18 @@ def select_tags(tag_list, key_list):
     return clean
 
 
-def valid_tags(tag_list):
-    """ checks tags for invalid chars """
+def valid_tags(tag_list, invalid):
+    """
+    Summary:
+        checks tags for invalid chars
+    Args:
+        tag_list (list): starting list of tags
+        invalid (list): list of illegal characters that should not be present in keys in tag_list
+    Returns:
+        Success | Failure, TYPE: bool
+    """
     for tag in tag_list:
-        if ':' in tag['Key']:
-            return False
+        for char in invalid:
+            if char in tag['Key']:
+                return False
     return True
