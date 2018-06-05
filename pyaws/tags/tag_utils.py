@@ -56,8 +56,12 @@ def divide_tags(tag_list, *args):
         Identifys a specific tag in tag_list by Key.  When found,
         creates a new tag list containing tags with keys provided in *args.
         tag_list is returned without matching tags
+    Args:
+        tag_list (list): tag list starting reference
+        matching (list): tags which have keys matching any of *args
+        residual (list): tag_list after any matching tags are removed
     RETURNS
-        TYPE: list, List contains any tags with corresponding key match
+        TYPE: matching tag list, residual tag list
     """
     matching = []
     residual = {x['Key']: x['Value'] for x in tag_list.copy()}
@@ -72,7 +76,7 @@ def divide_tags(tag_list, *args):
             except KeyError:
                 continue
     return matching, [{'Key': k, 'Value': v} for k,v in residual.items()]
-
+    
 
 def exclude_tags(tag_list, *args):
     """
