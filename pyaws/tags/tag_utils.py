@@ -1,11 +1,11 @@
 """
 pyaws.tags:  Tag Utilities
 """
-import os
-import sys
 import json
 import inspect
 from pygments import highlight, lexers, formatters
+import boto3
+from botocore.exceptions import ClientError
 from pyaws.core import loggers
 from pyaws import __version__
 
@@ -28,8 +28,90 @@ def create_taglist(dict):
     return tags
 
 
-def filter_tags(tag_list, *args):
+def delete_tags(resourceIds, tags):
+    """ Removes tags from an EC2 resource """
+    client = boto3.client('ec2')
+    try:
+        for resourceid in resourceIds:
+            response = client.delete_tags(
+                Resources=[resourceid],
+                Tags=tags
+            )
+            if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+                logger.info('Existing Tags deleted from vol id %s' % resourceid)
+                return True
+            else:
+                logger.warning('Problem deleting existing tags from vol id %s' % resourceid)
+                return False
+    except ClientError as e:
+        logger.critical(
+            "%s: Problem apply tags to ec2 instances (Code: %s Message: %s)" %
+            (inspect.stack()[0][3], e.response['Error']['Code'], e.response['Error']['Message']))
+        return False
+
+
+def divide_tags(tag_list, *args):
     """
+    Summary:
+        Identifys a specific tag in tag_list by Key.  When found,
+        creates a new tag list containing tags with keys provided in *args.
+        tag_list is returned without matching tags
+    RETURNS
+        TYPE: list, List contains any tags with corresponding key match
+    """
+    matching = []
+    residual = {x['Key']: x['Value'] for x in tag_list.copy()}
+    tag_dict = {x['Key']: x['Value'] for x in tag_list}
+    for key in args:
+        for k,v in tag_dict.items():
+            try:
+                if key == k:
+                    matching.append({'Key': k, 'Value': v})
+                else:
+                    residual.pop(key)
+            except KeyError:
+                continue
+    return matching, [{'Key': k, 'Value': v} for k,v in residual.items()]
+
+
+def exclude_tags(tag_list, *args):
+    """
+        - Filters a tag set by Exclusion
+        - variable tag keys given as parameters, tag keys corresponding to args
+          are excluded
+
+    RETURNS
+        TYPE: list
+    """
+    clean = tag_list.copy()
+
+    for tag in tag_list:
+        for arg in args:
+            if arg == tag['Key']:
+                clean.remove(tag)
+    return clean
+
+
+def include_tags(tag_list, *args):
+    """
+        - Filters a tag set by Inclusion
+        - variable tag keys given as parameters, tag keys corresponding to args
+          are excluded
+
+    RETURNS
+        TYPE: list
+    """
+    targets = []
+
+    for tag in tag_list:
+        for arg in args:
+            if arg == tag['Key']:
+                targets.append(tag)
+    return targets
+
+
+def filter_tags(tag_list, *args):
+    """DEPRECATED
         - Filters a tag set by exclusion
         - variable tag keys given as parameters, tag keys corresponding to args
           are excluded
@@ -123,7 +205,6 @@ def remove_duplicates(list):
             if dict['Key'] not in key_list:
                 clean_list.append(dict)
                 key_list.append(dict['Key'])
-
     except KeyError:
         # dedup list of items, not dict
         for item in list:
@@ -133,14 +214,14 @@ def remove_duplicates(list):
             else:
                 clean_list.append(item)
         return clean_list
-    except Exception:
-        return -1
+    except Exception as e:
+        raise e
     return clean_list
 
 
 def remove_restricted(list):
     """
-    Remove restricted Amazon tags from list of tags
+    Remove restricted (system) Amazon tags from list of tags
     """
 
     clean_list = []
