@@ -76,7 +76,7 @@ def divide_tags(tag_list, *args):
             except KeyError:
                 continue
     return matching, [{'Key': k, 'Value': v} for k,v in residual.items()]
-    
+
 
 def exclude_tags(tag_list, *args):
     """
@@ -94,6 +94,18 @@ def exclude_tags(tag_list, *args):
             if arg == tag['Key']:
                 clean.remove(tag)
     return clean
+
+
+def extract_tag(tag_list, key):
+    """
+    Summary:
+        Search tag list for prescence of tag matching key parameter
+    Returns:
+        tag, TYPE: list
+    """
+    if {x['Key']: x['Value'] for x in tag_list}.get(key):
+        return list(filter(lambda x: x['Key'] == key, tag_list))[0]
+    return []
 
 
 def include_tags(tag_list, *args):
