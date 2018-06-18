@@ -26,7 +26,7 @@ def _profile_prefix(profile, prefix='gcreds'):
         Determines if temp credential used;
         - if yes, returns profile with correct prefix
         - if no, returns profile (profile_name) unaltered
-        - Note:  Caller is process_profiles(), Not to be called directly
+        - Note:  Caller is parse_profiles(), Not to be called directly
     Args:
         profile (str): profile_name of a valid profile from local awscli config
         prefix (str): prefix prepended to profile containing STS temporary credentials
@@ -48,7 +48,7 @@ def _profile_prefix(profile, prefix='gcreds'):
     return None
 
 
-def process_profiles(profiles):
+def parse_profiles(profiles):
     """
     Summary:
         Parse awscli profile_names given as parameter in 1 of 2 forms:
@@ -64,14 +64,20 @@ def process_profiles(profiles):
         list of awscli profile names, TYPE: list
     """
     profile_list = []
-    if os.path.isfile(profiles):
-        with open(profiles) as f1:
-            for line in f1:
-                profile_list.append(_profile_prefix(line.strip()))
-    elif isinstance(profiles, list):
-        return [_profile_prefix(x.strip()) for x in profiles]
-    else:
-        return [_profile_prefix(profiles.strip())]
+    try:
+        if isinstance(profiles, list):
+            return [_profile_prefix(x.strip()) for x in profiles]
+        elif os.path.isfile(profiles):
+            with open(profiles) as f1:
+                for line in f1:
+                    profile_list.append(_profile_prefix(line.strip()))
+        else:
+            return [_profile_prefix(profiles.strip())]
+    except Exception as e:
+        logger.exception(
+            f'{inspect.stack()[0][3]}: Unknown error while converting profile_names from local awscli config: {e}'
+            )
+        raise
     return profile_list
 
 
