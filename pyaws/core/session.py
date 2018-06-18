@@ -68,8 +68,10 @@ def process_profiles(profiles):
         with open(profiles) as f1:
             for line in f1:
                 profile_list.append(_profile_prefix(line.strip()))
+    elif isinstance(profiles, list):
+        return [_profile_prefix(x.strip()) for x in profiles]
     else:
-        profile_list = [profile_prefix(profiles.strip())]
+        return [_profile_prefix(profiles.strip())]
     return profile_list
 
 
