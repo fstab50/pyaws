@@ -20,7 +20,7 @@ DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 logger = loggers.getLogger(__version__)
 
 
-def profile_prefix(profile, prefix='gcreds'):
+def _profile_prefix(profile, prefix='gcreds'):
     """
     Summary:
         Determines if temp credential used;
@@ -67,7 +67,7 @@ def process_profiles(profiles):
     if os.path.isfile(profiles):
         with open(profiles) as f1:
             for line in f1:
-                profile_list.append(profile_prefix(line.strip()))
+                profile_list.append(_profile_prefix(line.strip()))
     else:
         profile_list = [profile_prefix(profiles.strip())]
     return profile_list
