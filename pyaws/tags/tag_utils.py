@@ -4,10 +4,18 @@ pyaws.tags:  Tag Utilities
 import json
 import inspect
 from pygments import highlight, lexers, formatters
+from functools import reduce
 import boto3
 from botocore.exceptions import ClientError
+from pyaws.core.session import authenticated, boto3_session
 from pyaws.core import loggers
 from pyaws import __version__
+
+try:
+    from pyaws.core.oscodes_unix import exit_codes
+except Exception:
+    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+
 
 logger = loggers.getLogger(__version__)
 
@@ -28,9 +36,9 @@ def create_taglist(dict):
     return tags
 
 
-def delete_tags(resourceIds, tags):
+def delete_tags(resourceIds, region, tags):
     """ Removes tags from an EC2 resource """
-    client = boto3.client('ec2')
+    client = boto3_session('ec2', region)
     try:
         for resourceid in resourceIds:
             response = client.delete_tags(
@@ -209,7 +217,7 @@ def print_tags(resource_list, tag_list, mode=''):
     return 0
 
 
-def remove_duplicates(list):
+def remove_duplicates(alist):
     """
     Removes duplicate dict in a list of dict by enforcing unique keys
     """
@@ -217,19 +225,13 @@ def remove_duplicates(list):
     clean_list, key_list = [], []
 
     try:
-        for dict in list:
+        for dict in alist:
             if dict['Key'] not in key_list:
                 clean_list.append(dict)
                 key_list.append(dict['Key'])
     except KeyError:
         # dedup list of items, not dict
-        for item in list:
-            if clean_list:
-                if item not in clean_list:
-                    clean_list.append(item)
-            else:
-                clean_list.append(item)
-        return clean_list
+        return list(reduce(lambda r, x: r + [x] if x not in r else r, alist, []))
     except Exception as e:
         raise e
     return clean_list
