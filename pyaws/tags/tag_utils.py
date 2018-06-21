@@ -253,6 +253,20 @@ def remove_restricted(list):
     return clean_list
 
 
+def remove_bykeys(tag_list, *keys):
+    """
+    Summary:
+        Removes tags from a tag list for specified keys
+    Returns:
+        tags (list)
+    """
+    tag_dict = {x['Key']: x['Value'] for x in tag_list}
+    for key in keys:
+        if key in tag_dict:
+            tag_dict.pop(key)
+    return [{'Key': k, 'Value': v} for k,v in tag_dict.items()]
+
+
 def select_tags(tag_list, key_list):
     """
     Return selected tags from a list of many tags given a tag key
