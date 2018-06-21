@@ -25,7 +25,7 @@ def region_index(region):
     return url_prefix + json.loads(r2.content)['regions'][region]['currentVersionUrl']
 
 
-def price_data(service, sku, region):
+def price_data(service, region, sku=None):
     """
     Summary:
         all price data for an AWS service
@@ -33,4 +33,9 @@ def price_data(service, sku, region):
         data (json)
     """
     r = requests.get(region_index(service, region))
-    return json.loads(r.content)['products'][sku]
+    if sku:
+        return json.loads(r.content)['products'][sku]
+    return json.loads(r.content)['products']
+
+
+price_data("AWSLambda", 'eu-west-1')    
