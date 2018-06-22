@@ -56,10 +56,12 @@ def price_data(region, sku=None):
 
     return products, skus, parsed
 
+
 def main():
     from pprint import PrettyPrinter
     pp = PrettyPrinter()
     pp.pprint(price_data('eu-west-1'))
+
 
 if __name__ == '__main__':
     main()
