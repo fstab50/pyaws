@@ -294,7 +294,7 @@ def export_json_object(dict_obj, filename=None):
             print(highlight(json_str, lexers.JsonLexer(), formatters.TerminalFormatter()))
             logger.info('%s: successful export to stdout' % inspect.stack()[0][3])
             return True
-    except IOError as e:
+    except OSError as e:
         logger.critical(
             '%s: export_file_object: error writing to %s to filesystem. Error: %s' %
             (inspect.stack()[0][3], filename, str(e)))
@@ -318,7 +318,7 @@ def import_file_object(filename):
         file_obj = handle.read()
         dict_obj = json.loads(file_obj)
 
-    except IOError as e:
+    except OSError as e:
         logger.critical(
             'import_file_object: %s error opening %s' % (str(e), str(filename))
         )
@@ -405,7 +405,7 @@ def read_local_config(cfg):
             logger.warning(
                 '%s: local config file (%s) not found, cannot be read' %
                 (inspect.stack()[0][3], str(cfg)))
-    except IOError as e:
+    except OSError as e:
         logger.warning(
             'import_file_object: %s error opening %s' % (str(e), str(cfg))
         )
