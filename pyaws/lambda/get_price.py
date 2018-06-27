@@ -159,7 +159,11 @@ def main(region, dataType=None):
                     if key == 'pricePerUnit':
                         return value['USD']
     elif dataType and dataType == 'transfer':
-        return "TBD"
+        for k,v in response[1]['B5V2RNHAWGVJBZD3.JRTCKXETXF']['priceDimensions'].items():
+            if isinstance(v, dict):
+                for key, value in v.items():
+                    if key == 'pricePerUnit':
+                        return value['USD']
     elif dataType and dataType == 'request':
         return "TBD"
     return export_json_object(dict_obj=response)
