@@ -153,10 +153,10 @@ OPTIONS
         If no --element specified, the entire pricing json object
         for the region returned
 
-        -f, --filename (string):  Name of output file. Valid only
-            when a data element is NOT specified and you want the
-            entire pricing json object returned and persisted to
-            the filesystem
+        -f, --filename (string):  Name of output file. Valid when
+            a data element is NOT specified and you want the entire
+            pricing json object returned and persisted to the
+            filesystem.  No effect when --element given.
 
         -r, --region (string):  Region for which you want to return
             pricing.  If no region parameter specified, defaults to
