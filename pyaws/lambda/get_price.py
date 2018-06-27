@@ -126,25 +126,32 @@ def help_menu():
     """ Displays command line parameter options """
     menu = '''
                         help menu
+                        ---------
 
 DESCRIPTION
+
         Code returns AWS Price data metrics for AWS Lambda
 
 OPTIONS
+
         $ python3 get_price.py  [OPTIONS]
 
-                [-R, --return   <value> ]
+                [-e, --element   <value> ]
                 [-r, --region   <value> ]
                 [-d, --debug     ]
                 [-h, --help      ]
 
-        -R, --return (string):
-            Data Return Type.  Select the data element returned from one
-            of the following:
+        -e, --element (string):
+            Data Return Type.  Data element returned when one of
+            the following specified:
 
-                - compute (price $/GB memory/s) [DEFAULT]
-                - transfer (price $/GB transfered)
-                - request (price / lambda request)
+                - compute  ($ / GB-s) [DEFAULT]
+                - transfer ($ / GB transfered)
+                - request  ($ / request)
+                - edge     ($ / GB-s)
+
+        If no --element specified, the entire pricing json object
+        for the region returned
     '''
     print(menu)
     return True
@@ -166,6 +173,12 @@ def main(region, dataType=None):
                         return value['USD']
     elif dataType and dataType == 'request':
         return "TBD"
+    elif dataType and dataType == 'edge':
+        for k,v in response[1]['WUTD23YJE55E5JCC.JRTCKXETXF']['priceDimensions'].items():
+            if isinstance(v, dict):
+                for key, value in v.items():
+                    if key == 'pricePerUnit':
+                        return value['USD']
     return export_json_object(dict_obj=response)
 
 
@@ -176,7 +189,7 @@ def options(parser, help_menu=False):
     Returns:
         TYPE: argparse object, parser argument set
     """
-    parser.add_argument("-e", "--element", nargs='?', default='compute', type=str,
+    parser.add_argument("-e", "--element", nargs='?', default='list', type=str,
                         choices=RETURN_DATA, required=False)
     parser.add_argument("-p", "--profile", nargs='?', default="default",
                               required=False, help="type (default: %(default)s)")
