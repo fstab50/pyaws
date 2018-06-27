@@ -1,10 +1,12 @@
 """
 Retrieve Amazon Web Services Pricing
 """
+import argparse
 import os
 import sys
 import json
 import logging
+import inspect
 import requests
 from functools import lru_cache
 from itertools import chain
@@ -13,6 +15,7 @@ import boto3
 
 
 # globals
+PROFILE = 'default'
 __version__ = '1.0 '
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
@@ -144,14 +147,17 @@ OPTIONS
                 - transfer (price $/GB transfered)
                 - request (price / lambda request)
     '''
-    return menu
+    print(menu)
+    return True
 
 
-def main(arg):
+def main(region):
     from pprint import PrettyPrinter
     pp = PrettyPrinter()
-    r = export_json_object(price_data('eu-west-1'))
-    return r
+    products, skus, response = price_data(region=region)
+    #print(json.dumps(response, indent=4))
+    r = export_json_object(dict_obj=response)
+    return True
 
 
 def options(parser, help_menu=False):
@@ -166,7 +172,7 @@ def options(parser, help_menu=False):
     parser.add_argument("-p", "--profile", nargs='?', default="default",
                               required=False, help="type (default: %(default)s)")
     parser.add_argument("-r", "--region", nargs='?', default='list', type=str,
-                        choices=get_regions(), required=False)
+                        choices=get_regions(PROFILE), required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
@@ -179,12 +185,12 @@ def init_cli():
     try:
         args = options(parser)
     except Exception as e:
-        stdout_message(str(e), 'ERROR')
+        logger.exception('Problem parsing provided parameters: %s' % str(e))
 
-    if len(sys.argv) == 1 or args.help or not args.region:
-        print(help_menu())
-
-
+    if len(sys.argv) == 1 or args.help:
+        return help_menu()
+    elif not args.region:
+        args.region = default_region
     return main(region=args.region)
 
 
