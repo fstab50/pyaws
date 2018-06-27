@@ -152,12 +152,8 @@ OPTIONS
 
 
 def main(region):
-    from pprint import PrettyPrinter
-    pp = PrettyPrinter()
     products, skus, response = price_data(region=region)
-    #print(json.dumps(response, indent=4))
-    r = export_json_object(dict_obj=response)
-    return True
+    return export_json_object(dict_obj=response)
 
 
 def options(parser, help_menu=False):
@@ -187,10 +183,10 @@ def init_cli():
     except Exception as e:
         logger.exception('Problem parsing provided parameters: %s' % str(e))
 
-    if len(sys.argv) == 1 or args.help:
+    if args.help:
         return help_menu()
     elif not args.region:
-        args.region = default_region
+        return main(region=default_region)
     return main(region=args.region)
 
 
