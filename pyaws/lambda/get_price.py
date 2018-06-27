@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 
 # set region default
 default_region = os.getenv('AWS_DEFAULT_REGION', 'eu-west-1')
-
+default_region = 'eu-west-1'
 
 RETURN_DATA = ['compute', 'transfer', 'request']
 INDEXURL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json"
@@ -119,7 +119,6 @@ def price_data(region, sku=None):
         if list(term.values())[0]['sku'] not in skus:
             continue
         parsed.append(term)
-
     return products, skus, parsed
 
 
@@ -154,7 +153,15 @@ OPTIONS
 def main(region, dataType=None):
     products, skus, response = price_data(region=region)
     if dataType and dataType == 'compute':
-        type = response
+        for k,v in response[4]['SGGKTWDV7PGMPPSJ.JRTCKXETXF']['priceDimensions'].items():
+            if isinstance(v, dict):
+                for key, value in v.items():
+                    if key == 'pricePerUnit':
+                        return value['USD']
+    elif dataType and dataType == 'transfer':
+        return "TBD"
+    elif dataType and dataType == 'request':
+        return "TBD"
     return export_json_object(dict_obj=response)
 
 
@@ -165,7 +172,7 @@ def options(parser, help_menu=False):
     Returns:
         TYPE: argparse object, parser argument set
     """
-    parser.add_argument("-R", "--return", nargs='?', default='list', type=str,
+    parser.add_argument("-e", "--element", nargs='?', default='compute', type=str,
                         choices=RETURN_DATA, required=False)
     parser.add_argument("-p", "--profile", nargs='?', default="default",
                               required=False, help="type (default: %(default)s)")
@@ -184,10 +191,11 @@ def init_cli():
         args = options(parser)
     except Exception as e:
         logger.exception('Problem parsing provided parameters: %s' % str(e))
-
     if args.help:
         return help_menu()
-    return main(region=args.region, dataType=args.return)
+    if args.debug:
+        print('\n\nParameters:\n\targs.region:\t%s\n\targs.element:\t%s\n' % (args.region, args.element))
+    return main(region=args.region, dataType=args.element)
 
 
 if __name__ == '__main__':
