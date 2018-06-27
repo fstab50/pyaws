@@ -151,8 +151,10 @@ OPTIONS
     return True
 
 
-def main(region):
+def main(region, dataType=None):
     products, skus, response = price_data(region=region)
+    if dataType and dataType == 'compute':
+        type = response
     return export_json_object(dict_obj=response)
 
 
@@ -185,7 +187,7 @@ def init_cli():
 
     if args.help:
         return help_menu()
-    return main(region=args.region)
+    return main(region=args.region, dataType=args.return)
 
 
 if __name__ == '__main__':
