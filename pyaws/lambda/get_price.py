@@ -164,7 +164,7 @@ OPTIONS
     return True
 
 
-def main(region, dataType=None):
+def main(region, dataType=None, output_path=None):
     products, skus, response = price_data(region=region)
     if dataType and dataType == 'compute':
         for k,v in response[4]['SGGKTWDV7PGMPPSJ.JRTCKXETXF']['priceDimensions'].items():
@@ -190,7 +190,7 @@ def main(region, dataType=None):
                 for key, value in v.items():
                     if key == 'pricePerUnit':
                         return value['USD']
-    return export_json_object(dict_obj=response)
+    return export_json_object(dict_obj=response, filename=output_path)
 
 
 def options(parser, help_menu=False):
@@ -202,7 +202,7 @@ def options(parser, help_menu=False):
     """
     parser.add_argument("-e", "--element", nargs='?', default='list', type=str,
                         choices=RETURN_DATA, required=False)
-    parser.add_argument("-p", "--profile", nargs='?', default="default",
+    parser.add_argument("-f", "--filename", nargs='?', default=None,
                               required=False, help="type (default: %(default)s)")
     parser.add_argument("-r", "--region", nargs='?', default=default_region, type=str,
                         choices=get_regions(PROFILE), required=False)
@@ -223,7 +223,7 @@ def init_cli():
         return help_menu()
     if args.debug:
         print('\n\nParameters:\n\targs.region:\t%s\n\targs.element:\t%s\n' % (args.region, args.element))
-    return main(region=args.region, dataType=args.element)
+    return main(region=args.region, dataType=args.element, output_path=args.filename)
 
 
 if __name__ == '__main__':
