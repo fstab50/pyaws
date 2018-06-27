@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 default_region = os.getenv('AWS_DEFAULT_REGION', 'eu-west-1')
 default_region = 'eu-west-1'
 
-RETURN_DATA = ['compute', 'transfer', 'request', 'edge']
+RETURN_DATA = ['compute', 'transfer', 'request', 'requests', 'edge']
 INDEXURL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json"
 url_prefix = "https://pricing.us-east-1.amazonaws.com"
 
@@ -178,8 +178,12 @@ def main(region, dataType=None):
                 for key, value in v.items():
                     if key == 'pricePerUnit':
                         return value['USD']
-    elif dataType and dataType == 'request':
-        return "TBD"
+    elif dataType and dataType in ('request', 'requests'):
+        for k,v in response[0]['DDKXA6JP8NCVUFRZ.JRTCKXETXF']['priceDimensions'].items():
+            if isinstance(v, dict):
+                for key, value in v.items():
+                    if key == 'pricePerUnit':
+                        return value['USD']
     elif dataType and dataType == 'edge':
         for k,v in response[-1]['WUTD23YJE55E5JCC.JRTCKXETXF']['priceDimensions'].items():
             if isinstance(v, dict):
