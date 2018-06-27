@@ -141,17 +141,24 @@ OPTIONS
                 [-d, --debug     ]
                 [-h, --help      ]
 
-        -e, --element (string):
-            Data Return Type.  Data element returned when one of
-            the following specified:
+        -e, --element (string):  Data Return Type.  Data element
+            returned when one of the following specified:
 
-                - compute  ($ / GB-s) [DEFAULT]
-                - transfer ($ / GB transfered)
-                - request  ($ / request)
-                - edge     ($ / GB-s)
+                - compute  ($/GB-s) [DEFAULT]
+                - transfer ($/GB transfered)
+                - request  ($/req)
+                - edge     ($/GB-s)
 
         If no --element specified, the entire pricing json object
         for the region returned
+
+        -r, --region (string):  Region for which you want to return
+            pricing.  If no region parameter specified, defaults to
+            eu-west-1
+
+        -d, --debug: Debug mode, verbose output.
+
+        -h, --help: Print this menu
     '''
     print(menu)
     return True
