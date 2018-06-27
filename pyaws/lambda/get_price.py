@@ -137,6 +137,7 @@ OPTIONS
         $ python3 get_price.py  [OPTIONS]
 
                 [-e, --element   <value> ]
+                [-f, --filename  <value> ]
                 [-r, --region   <value> ]
                 [-d, --debug     ]
                 [-h, --help      ]
@@ -151,6 +152,11 @@ OPTIONS
 
         If no --element specified, the entire pricing json object
         for the region returned
+
+        -f, --filename (string):  Name of output file. Valid only
+            when a data element is NOT specified and you want the
+            entire pricing json object returned and persisted to
+            the filesystem
 
         -r, --region (string):  Region for which you want to return
             pricing.  If no region parameter specified, defaults to
