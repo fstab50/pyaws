@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 default_region = os.getenv('AWS_DEFAULT_REGION', 'eu-west-1')
 default_region = 'eu-west-1'
 
-RETURN_DATA = ['compute', 'transfer', 'request']
+RETURN_DATA = ['compute', 'transfer', 'request', 'edge']
 INDEXURL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json"
 url_prefix = "https://pricing.us-east-1.amazonaws.com"
 
@@ -144,10 +144,10 @@ OPTIONS
         -e, --element (string):  Data Return Type.  Data element
             returned when one of the following specified:
 
-                - compute  ($/GB-s) [DEFAULT]
-                - transfer ($/GB transfered)
-                - request  ($/req)
-                - edge     ($/GB-s)
+                - compute  :  AWS Lambda Compute Price ($/GB-s)
+                - transfer :  AWS Lambda Bandwidth Price ($/GB)
+                - request  :  Price per request ($/req)
+                - edge     :  Compute Price Lambda Edge ($/GB-s)
 
         If no --element specified, the entire pricing json object
         for the region returned
@@ -181,7 +181,7 @@ def main(region, dataType=None):
     elif dataType and dataType == 'request':
         return "TBD"
     elif dataType and dataType == 'edge':
-        for k,v in response[1]['WUTD23YJE55E5JCC.JRTCKXETXF']['priceDimensions'].items():
+        for k,v in response[-1]['WUTD23YJE55E5JCC.JRTCKXETXF']['priceDimensions'].items():
             if isinstance(v, dict):
                 for key, value in v.items():
                     if key == 'pricePerUnit':
