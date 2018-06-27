@@ -167,7 +167,7 @@ def options(parser, help_menu=False):
                         choices=RETURN_DATA, required=False)
     parser.add_argument("-p", "--profile", nargs='?', default="default",
                               required=False, help="type (default: %(default)s)")
-    parser.add_argument("-r", "--region", nargs='?', default='list', type=str,
+    parser.add_argument("-r", "--region", nargs='?', default=default_region, type=str,
                         choices=get_regions(PROFILE), required=False)
     parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
     parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
@@ -185,8 +185,6 @@ def init_cli():
 
     if args.help:
         return help_menu()
-    elif not args.region:
-        return main(region=default_region)
     return main(region=args.region)
 
 
