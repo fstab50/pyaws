@@ -20,11 +20,17 @@ except Exception:
 
 # globals
 logger = logd.getLogger(__version__)
+VALID_FORMATS = ('json', 'text')
 VALID_AMI_TYPES = (
         'amazonlinux1', 'amazonlinux2', 'redhat7.4', 'redhat7.5', 'ubuntu14.04', 'ubuntu16.04'
     )
-VALID_FORMATS = ('json', 'text')
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
+
+# AWS Marketplace Owner IDs
+UBUNTU='099720109477'
+AMAZON='137112412989'
+CENTOS='679593333241'
+REDHAT='679593333241'
 
 
 def get_regions(profile):
@@ -140,7 +146,7 @@ def amazonlinux2(profile, region=None, detailed=False, debug=False):
 
 def redhat(profile, os, region=None, detailed=False, debug=False):
     """
-    Return latest current amazonlinux v1 AMI for each region
+    Return latest current Redhat AMI for each region
     Args:
         :profile (str): profile_name
         :region (str): if supplied as parameter, only the ami for the single
@@ -187,12 +193,61 @@ def redhat(profile, os, region=None, detailed=False, debug=False):
     return amis
 
 
+def ubuntu(profile, os, region=None, detailed=False, debug=False):
+    """
+    Return latest current ubuntu AMI for each region
+    Args:
+        :profile (str): profile_name
+        :region (str): if supplied as parameter, only the ami for the single
+        region specified is returned
+    Returns:
+        amis, TYPE: list:  container for metadata dict for most current instance in region
+    """
+    amis, metadata = {}, {}
+    if region:
+        regions = [region]
+    else:
+        regions = get_regions(profile=profile)
+    # retrieve ami for each region in list
+    for region in regions:
+        try:
+            client = boto3_session(service='ec2', region=region, profile=profile)
+            r = client.describe_images(
+                Owners=[UBUNTU],
+                Filters=[
+                    {
+                        'Name': 'name',
+                        'Values': [
+                            '*%s*' % os
+                        ]
+                    }
+                ])
+
+            # need to find ami with latest date returned
+            newest = sorted(r['Images'], key=lambda k: k['CreationDate'])[-1]
+            metadata[region] = newest
+            amis[region] = newest['ImageId']
+        except ClientError as e:
+            logger.exception(
+                '%s: Boto error while retrieving AMI data (%s)' %
+                (inspect.stack()[0][3], str(e)))
+            continue
+        except Exception as e:
+            logger.exception(
+                '%s: Unknown Exception occured while retrieving AMI data (%s)' %
+                (inspect.stack()[0][3], str(e)))
+            raise e
+    if detailed:
+        return metadata
+    return amis
+
+
 def os_version(imageType):
     """ Returns the version when provided redhat AMI type """
     return ''.join(re.split('(\d+)', imageType)[1:])
 
 
-def main(profile, imagetype, format, debug, filename='', rgn=None):
+def main(profile, imagetype, format, details, debug, filename='', rgn=None):
     """
     Summary:
         Calls appropriate module function to identify the latest current amazon machine
@@ -201,16 +256,16 @@ def main(profile, imagetype, format, debug, filename='', rgn=None):
         json (dict) | text (str)
     """
     if imagetype == 'amazonlinux1':
-        latest = amazonlinux1(profile=profile, region=rgn, debug=debug)
+        latest = amazonlinux1(profile=profile,  region=rgn, detailed=details, debug=debug)
 
     elif imagetype == 'amazonlinux2':
-        latest = amazonlinux2(profile=profile, region=rgn, debug=debug)
+        latest = amazonlinux2(profile=profile, region=rgn, detailed=details, debug=debug)
 
     elif 'redhat' in imagetype:
-        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, debug=debug)
+        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
     elif 'ubuntu' in imagetype:
-        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, debug=debug)
+        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
     # return appropriate response format
     if format == 'json' and not filename:
@@ -234,10 +289,11 @@ def options(parser, help_menu=True):
     """
     parser.add_argument("-p", "--profile", nargs='?', default="default", required=False, help="type (default: %(default)s)")
     parser.add_argument("-i", "--image", nargs='?', type=str, choices=VALID_AMI_TYPES, required=False)
+    parser.add_argument("-d", "--details", dest='details', default=False, action='store_true', required=False)
     parser.add_argument("-r", "--region", nargs='?', type=str, required=False)
     parser.add_argument("-f", "--format", nargs='?', default='json', type=str, choices=VALID_FORMATS, required=False)
     parser.add_argument("-n", "--filename", nargs='?', default='', type=str, required=False)
-    parser.add_argument("-d", "--debug", dest='debug', default=False, action='store_true', required=False)
+    parser.add_argument("-D", "--debug", dest='debug', default=False, action='store_true', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     #parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
@@ -271,13 +327,13 @@ def init_cli():
                 main(
                         profile=args.profile, imagetype=args.image,
                         format=args.format, filename=args.filename,
-                        rgn=args.region, debug=args.debug
+                        rgn=args.region, details=args.details, debug=args.debug
                     )
         elif args.image and not args.region:
             main(
                     profile=args.profile, imagetype=args.image,
                     format=args.format, filename=args.filename,
-                    debug=args.debug
+                    details=args.details, debug=args.debug
                 )
         else:
             stdout_message(
