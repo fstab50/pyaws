@@ -187,7 +187,7 @@ def redhat(profile, os, region=None, detailed=False, debug=False):
     return amis
 
 
-def redhat_version(imageType):
+def os_version(imageType):
     """ Returns the version when provided redhat AMI type """
     return ''.join(re.split('(\d+)', imageType)[1:])
 
@@ -202,10 +202,15 @@ def main(profile, imagetype, format, debug, filename='', rgn=None):
     """
     if imagetype == 'amazonlinux1':
         latest = amazonlinux1(profile=profile, region=rgn, debug=debug)
+
     elif imagetype == 'amazonlinux2':
         latest = amazonlinux2(profile=profile, region=rgn, debug=debug)
+
     elif 'redhat' in imagetype:
-        latest = redhat(profile=profile, os=redhat_version(imagetype), region=rgn, debug=debug)
+        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, debug=debug)
+
+    elif 'ubuntu' in imagetype:
+        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, debug=debug)
 
     # return appropriate response format
     if format == 'json' and not filename:
@@ -262,11 +267,12 @@ def init_cli():
     elif authenticated(profile=args.profile):
         # execute ami operation
         if args.image and args.region:
-            main(
-                    profile=args.profile, imagetype=args.image,
-                    format=args.format, filename=args.filename,
-                    rgn=args.region, debug=args.debug
-                )
+            if args.region in get_regions(args.profile):
+                main(
+                        profile=args.profile, imagetype=args.image,
+                        format=args.format, filename=args.filename,
+                        rgn=args.region, debug=args.debug
+                    )
         elif args.image and not args.region:
             main(
                     profile=args.profile, imagetype=args.image,
@@ -292,7 +298,3 @@ def init_cli():
     configure keyup runtime parameters.   Exiting. Code: """
     logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['E_MISC']['Code']))
     print(failure)
-
-
-if __name__ == '__main__':
-    sys.exit(init_cli())
