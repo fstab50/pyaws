@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import re
 import sys
 import json
 import inspect
@@ -19,7 +20,7 @@ except Exception:
 
 # globals
 logger = logd.getLogger(__version__)
-VALID_AMI_TYPES = ('amazonlinux1', 'amazonlinux2', 'redhat', 'ubuntu14.04', 'ubuntu16.04')
+VALID_AMI_TYPES = ('amazonlinux1', 'amazonlinux2', 'redhat7.5', 'ubuntu14.04', 'ubuntu16.04')
 VALID_FORMATS = ('json', 'text')
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
@@ -135,7 +136,7 @@ def amazonlinux2(profile, region=None, detailed=False, debug=False):
     return amis
 
 
-def redhat(profile, region=None, detailed=False, debug=False):
+def redhat(profile, os, region=None, detailed=False, debug=False):
     """
     Return latest current amazonlinux v1 AMI for each region
     Args:
@@ -150,7 +151,6 @@ def redhat(profile, region=None, detailed=False, debug=False):
         regions = [region]
     else:
         regions = get_regions(profile=profile)
-
     # retrieve ami for each region in list
     for region in regions:
         try:
@@ -161,7 +161,7 @@ def redhat(profile, region=None, detailed=False, debug=False):
                     {
                         'Name': 'name',
                         'Values': [
-                            'RHEL-7.?*GA*'
+                            'RHEL-%s*GA*' % os
                         ]
                     }
                 ])
@@ -185,6 +185,11 @@ def redhat(profile, region=None, detailed=False, debug=False):
     return amis
 
 
+def redhat_version(imageType):
+    """ Returns the version when provided redhat AMI type """
+    return ''.join(re.split('(\d+)', imageType)[1:])
+
+
 def main(profile, imagetype, format, debug, filename='', rgn=None):
     """
     Summary:
@@ -197,8 +202,8 @@ def main(profile, imagetype, format, debug, filename='', rgn=None):
         latest = amazonlinux1(profile=profile, region=rgn, debug=debug)
     elif imagetype == 'amazonlinux2':
         latest = amazonlinux2(profile=profile, region=rgn, debug=debug)
-    elif imagetype == 'redhat':
-        latest = redhat(profile=profile, region=rgn, debug=debug)
+    elif 'redhat' in imagetype:
+        latest = redhat(profile=profile, os=redhat_version(imagetype), region=rgn, debug=debug)
 
     # return appropriate response format
     if format == 'json' and not filename:
