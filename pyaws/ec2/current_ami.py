@@ -205,7 +205,7 @@ def main(profile, imagetype, format, filename=''):
         sys.exit(exit_codes['EX_OK']['Code'])
 
     elif format == 'text' and not filename:
-        print('{}'.format(latest)
+        print('{}'.format(latest))
 
 
 def options(parser, help_menu=True):
@@ -235,7 +235,7 @@ def init_cli():
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_MISC']['Code'])
 
-    if debug:
+    if args.debug:
         print('profile is: ' + args.profile)
         print('image type: ' + args.image)
         print('format: ' + args.format)
@@ -255,7 +255,7 @@ def init_cli():
                 )
         else:
             stdout_message(
-                    f'Image type must be one of: {VALID_AMI_TYPES}'
+                    f'Image type must be one of: {VALID_AMI_TYPES}',
                     prefix='INFO'
                 )
             sys.exit(exit_codes['E_DEPENDENCY']['Code'])
