@@ -20,7 +20,9 @@ except Exception:
 
 # globals
 logger = logd.getLogger(__version__)
-VALID_AMI_TYPES = ('amazonlinux1', 'amazonlinux2', 'redhat7.5', 'ubuntu14.04', 'ubuntu16.04')
+VALID_AMI_TYPES = (
+        'amazonlinux1', 'amazonlinux2', 'redhat7.4', 'redhat7.5', 'ubuntu14.04', 'ubuntu16.04'
+    )
 VALID_FORMATS = ('json', 'text')
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
