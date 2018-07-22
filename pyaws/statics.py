@@ -13,7 +13,6 @@ Module Attributes:
         default for stsaval config files, includes config_dir (~/.stsaval)
 """
 
-import os
 import inspect
 import platform
 import logging
@@ -39,9 +38,8 @@ except KeyError as e:
         '%s: %s variable is required and not found in the environment' %
         (inspect.stack()[0][3], str(e)))
     raise e
+
 else:
-    # local vars -- this section executes as default; if windows, execute diff
-    # section with appropriate pathnames
 
     # project
     PACKAGE = 'pyaws'
@@ -52,8 +50,8 @@ else:
     enable_logging = False
     log_mode = 'FILE'
     log_filename = PACKAGE + '.log'
-    log_dir = user_home + '/' + 'logs'
-    log_path = log_dir + '/' + log_filename
+    log_dir = os_parityPath(user_home + '/' + 'logs')
+    log_path = os_parityPath(log_dir + '/' + log_filename)
 
     local_config = {
         "PROJECT": {
