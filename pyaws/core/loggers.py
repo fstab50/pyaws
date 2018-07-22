@@ -9,6 +9,7 @@ Example usage:
 import logging
 
 
+
 def getLogger(*args, **kwargs):
     """ custom format logger """
     logger = logging.getLogger(*args, **kwargs)
@@ -17,5 +18,5 @@ def getLogger(*args, **kwargs):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter('%(pathname)s - %(name)s - [%(levelname)s]: %(message)s'))
         logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
     return logger
