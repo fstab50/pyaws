@@ -7,10 +7,10 @@ import json
 import inspect
 from pygments import highlight, lexers, formatters
 import boto3
+from pyaws import logd, __version__
 from botocore.exceptions import ClientError
 from pyaws.core.session import authenticated, boto3_session
 from pyaws.core.script_utils import stdout_message, export_json_object
-from pyaws import loggers
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -18,17 +18,16 @@ except Exception:
     from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
 
 # globals
-logger = loggers.getLogger()
-VALID_AMIS = ('amazonlinux1', 'amazonlinux2', 'aml1', 'aml2', 'redhat', 'kali')
-VALID_FORMATS = ('stdout', 'file', 'list')
+logger = logd.getLogger(__version__)
+VALID_AMI_TYPES = ('amazonlinux1', 'amazonlinux2', 'redhat', 'ubuntu14.04', 'ubuntu16.04')
+VALID_FORMATS = ('json', 'text')
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
 
 def get_regions(profile):
     """ Return list of all regions """
     try:
-        if not profile:
-            profile = 'default'
+
         client = boto3_session(service='ec2', profile=profile)
 
     except ClientError as e:
@@ -183,6 +182,32 @@ def redhat(profile, region=None, detailed=False, debug=False):
     return amis
 
 
+def main(profile, imagetype, format, filename=''):
+    """
+    Summary:
+        Calls appropriate module function to identify the latest current amazon machine
+        image for the specified OS type
+    Returns:
+        json (dict) | text (str)
+    """
+    if imagetype in ('amazonlinux1', 'aml1'):
+        latest = amazonlinux1(profile=profile, debug=debug)
+    elif image in ('amazonlinux2', 'aml2'):
+        latest = amazonlinux2(profile=profile, debug=debug)
+
+    # return appropriate response format
+    if format == 'json' and not filename:
+        export_json_object(dict_obj=latest)
+        sys.exit(exit_codes['EX_OK']['Code'])
+
+    elif format == 'json' and filename:
+        export_json_object(dict_obj=latest, filename=filename)
+        sys.exit(exit_codes['EX_OK']['Code'])
+
+    elif format == 'text' and not filename:
+        print('{}'.format(latest)
+
+
 def options(parser, help_menu=True):
     """
     Summary:
@@ -191,68 +216,49 @@ def options(parser, help_menu=True):
         TYPE: argparse object, parser argument set
     """
     parser.add_argument("-p", "--profile", nargs='?', default="default", required=False, help="type (default: %(default)s)")
-    parser.add_argument("-i", "--image", nargs='?', default='list', type=str, choices=VALID_AMIS, required=False)
-    parser.add_argument("-f", "--format", nargs='?', default='list', type=str, choices=VALID_FORMATS, required=False)
+    parser.add_argument("-i", "--image", nargs='?', type=str, choices=VALID_AMI_TYPES, required=False)
+    parser.add_argument("-f", "--format", nargs='?', default='json', type=str, choices=VALID_FORMATS, required=False)
     parser.add_argument("-n", "--filename", nargs='?', default='', type=str, required=False)
-    parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
+    parser.add_argument("-d", "--debug", dest='debug', default=False, action='store_true', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
     #parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
 
 
-def init_cli(profile, image, format='stdout', filename=None, debug=False):
-    # parser = argparse.ArgumentParser(add_help=False, usage=help_menu())
-    #kwargs = {'image': 'amazonlinux1'}
-    #if kwargs:
-    #    profile =  kwargs.get('profile') or 'default'
-    #    image = kwargs.get('image')
-    #    format = kwargs.get('format') or 'print'
-    #    filename = kwargs.get('filename') or None
-    #    debug = kwargs.get('debug') or False
-    #else:
-    if __name__ == '__main__':
-        try:
-            parser = argparse.ArgumentParser(add_help=True)
-            args = options(parser)
-        except Exception as e:
-            #help_menu()
-            stdout_message(str(e), 'ERROR')
-            sys.exit(exit_codes['EX_OK']['Code'])
-        # parse parameters
-        profile = args.profile or 'default'
-        image = args.image
-        format = args.format or 'print'
-        filename = args.filename or None
-        debug = args.debug or False
+def init_cli():
+    """ Collect parameters and call main """
+    try:
+        parser = argparse.ArgumentParser(add_help=True)
+        args = options(parser)
+    except Exception as e:
+        #help_menu()
+        stdout_message(str(e), 'ERROR')
+        sys.exit(exit_codes['E_MISC']['Code'])
 
     if debug:
-        print('profile is: ' + profile)
-        print('image type: ' + image)
-        print('format: ' + format)
-        print('debug flag: %b', str(debug))
+        print('profile is: ' + args.profile)
+        print('image type: ' + args.image)
+        print('format: ' + args.format)
+        print('filename: ' + args.filename)
+        print('debug flag: %b', str(args.debug))
 
     if len(sys.argv) == 1:
         #help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
 
-    elif authenticated(profile=profile):
+    elif authenticated(profile=args.profile):
         # execute ami operation
-        if image in ('amazonlinux1', 'aml1'):
-            latest = amazonlinux1(profile=profile, debug=debug)
-        elif image in ('amazonlinux2', 'aml2'):
-            latest = amazonlinux2(profile=profile, debug=debug)
-
-        # return appropriate response format
-        if RETURN_FORMAT == 'stdout':
-            export_json_object(dict_obj=latest)
-            sys.exit(exit_codes['EX_OK']['Code'])
-
-        elif RETURN_FORMAT == 'file' and filename:
-            export_json_object(dict_obj=latest, filename=filename)
-            sys.exit(exit_codes['EX_OK']['Code'])
-
-        elif RETURN_FORMAT == 'list':
-            return latest
+        if args.image:
+            main(
+                    profile=args.profile, imagetype=args.image,
+                    format=args.format, filename=args.filename
+                )
+        else:
+            stdout_message(
+                    f'Image type must be one of: {VALID_AMI_TYPES}'
+                    prefix='INFO'
+                )
+            sys.exit(exit_codes['E_DEPENDENCY']['Code'])
     else:
         stdout_message(
             'Authenication Failed to AWS Account for user %s' % profile,
@@ -269,6 +275,4 @@ def init_cli(profile, image, format='stdout', filename=None, debug=False):
 
 
 if __name__ == '__main__':
-    RETURN_FORMAT = 'print'
-    init_cli()
-    sys.exit(exit_codes['EX_OK']['Code'])
+    sys.exit(init_cli())
