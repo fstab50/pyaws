@@ -145,7 +145,7 @@ def redhat(profile, region=None, detailed=False, debug=False):
     Returns:
         amis, TYPE: list:  container for metadata dict for most current instance in region
     """
-    amis, metadata, temp = {}, {}, {}
+    amis, metadata = {}, {}
     if region:
         regions = [region]
     else:
@@ -167,11 +167,9 @@ def redhat(profile, region=None, detailed=False, debug=False):
                 ])
 
             # need to find ami with latest date returned
-            #d =[{'date': x['CreationDate'], 'image': x['ImageId']} for x in r['Images']]
-            #print(json.dumps(d, indent=4))
-
-            metadata[region] = r['Images'][0]
-            amis[region] = r['Images'][0]['ImageId']
+            newest = sorted(r['Images'], key=lambda k: k['CreationDate'])[-1]
+            metadata[region] = newest
+            amis[region] = newest['ImageId']
         except ClientError as e:
             logger.exception(
                 '%s: Boto error while retrieving AMI data (%s)' %
