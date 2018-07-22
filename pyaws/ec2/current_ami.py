@@ -145,7 +145,7 @@ def redhat(profile, region=None, detailed=False, debug=False):
     Returns:
         amis, TYPE: list:  container for metadata dict for most current instance in region
     """
-    amis, metadata = {}, {}
+    amis, metadata, temp = {}, {}, {}
     if region:
         regions = [region]
     else:
@@ -156,15 +156,20 @@ def redhat(profile, region=None, detailed=False, debug=False):
         try:
             client = boto3_session(service='ec2', region=region, profile=profile)
             r = client.describe_images(
-                Owners=['amazon'],
+                Owners=['309956199498'],
                 Filters=[
                     {
                         'Name': 'name',
                         'Values': [
-
+                            'RHEL-7.?*GA*'
                         ]
                     }
                 ])
+
+            # need to find ami with latest date returned
+            #d =[{'date': x['CreationDate'], 'image': x['ImageId']} for x in r['Images']]
+            #print(json.dumps(d, indent=4))
+
             metadata[region] = r['Images'][0]
             amis[region] = r['Images'][0]['ImageId']
         except ClientError as e:
@@ -182,7 +187,7 @@ def redhat(profile, region=None, detailed=False, debug=False):
     return amis
 
 
-def main(profile, imagetype, format, filename=''):
+def main(profile, imagetype, format, debug, filename='', rgn=None):
     """
     Summary:
         Calls appropriate module function to identify the latest current amazon machine
@@ -190,10 +195,12 @@ def main(profile, imagetype, format, filename=''):
     Returns:
         json (dict) | text (str)
     """
-    if imagetype in ('amazonlinux1', 'aml1'):
-        latest = amazonlinux1(profile=profile, debug=debug)
-    elif image in ('amazonlinux2', 'aml2'):
-        latest = amazonlinux2(profile=profile, debug=debug)
+    if imagetype == 'amazonlinux1':
+        latest = amazonlinux1(profile=profile, region=rgn, debug=debug)
+    elif imagetype == 'amazonlinux2':
+        latest = amazonlinux2(profile=profile, region=rgn, debug=debug)
+    elif imagetype == 'redhat':
+        latest = redhat(profile=profile, region=rgn, debug=debug)
 
     # return appropriate response format
     if format == 'json' and not filename:
@@ -217,6 +224,7 @@ def options(parser, help_menu=True):
     """
     parser.add_argument("-p", "--profile", nargs='?', default="default", required=False, help="type (default: %(default)s)")
     parser.add_argument("-i", "--image", nargs='?', type=str, choices=VALID_AMI_TYPES, required=False)
+    parser.add_argument("-r", "--region", nargs='?', type=str, required=False)
     parser.add_argument("-f", "--format", nargs='?', default='json', type=str, choices=VALID_FORMATS, required=False)
     parser.add_argument("-n", "--filename", nargs='?', default='', type=str, required=False)
     parser.add_argument("-d", "--debug", dest='debug', default=False, action='store_true', required=False)
@@ -248,10 +256,17 @@ def init_cli():
 
     elif authenticated(profile=args.profile):
         # execute ami operation
-        if args.image:
+        if args.image and args.region:
             main(
                     profile=args.profile, imagetype=args.image,
-                    format=args.format, filename=args.filename
+                    format=args.format, filename=args.filename,
+                    rgn=args.region, debug=args.debug
+                )
+        elif args.image and not args.region:
+            main(
+                    profile=args.profile, imagetype=args.image,
+                    format=args.format, filename=args.filename,
+                    debug=args.debug
                 )
         else:
             stdout_message(
