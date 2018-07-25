@@ -249,6 +249,11 @@ def os_version(imageType):
     return ''.join(re.split('(\d+)', imageType)[1:])
 
 
+def format_text(json_object):
+    """ Formats json object into text format """
+    return True
+
+
 def main(profile, imagetype, format, details, debug, filename='', rgn=None):
     """
     Summary:
@@ -257,31 +262,37 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
     Returns:
         json (dict) | text (str)
     """
-    if imagetype == 'amazonlinux1':
-        latest = amazonlinux1(profile=profile,  region=rgn, detailed=details, debug=debug)
+    try:
+        if imagetype == 'amazonlinux1':
+            latest = amazonlinux1(profile=profile,  region=rgn, detailed=details, debug=debug)
 
-    elif imagetype == 'amazonlinux2':
-        latest = amazonlinux2(profile=profile, region=rgn, detailed=details, debug=debug)
+        elif imagetype == 'amazonlinux2':
+            latest = amazonlinux2(profile=profile, region=rgn, detailed=details, debug=debug)
 
-    elif 'redhat' in imagetype:
-        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
+        elif 'redhat' in imagetype:
+            latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
-    elif 'ubuntu' in imagetype:
-        latest = ubuntu(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
+        elif 'ubuntu' in imagetype:
+            latest = ubuntu(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
-    # return appropriate response format
-    if format == 'json' and not filename:
-        export_json_object(dict_obj=latest)
+        # return appropriate response format
+        if format == 'json' and not filename:
+            export_json_object(dict_obj=latest)
 
-    elif format == 'json' and filename:
-        export_json_object(dict_obj=latest, filename=filename)
+        elif format == 'json' and filename:
+            export_json_object(dict_obj=latest, filename=filename)
 
-    elif format == 'text' and not filename:
-        if rgn:
-            print('{}'.format(latest[rgn]))
-        else:
-            print('{}'.format(latest))
-
+        elif format == 'text' and not filename:
+            if rgn:
+                print('{}'.format(latest[rgn]))
+            else:
+                print('{}'.format(latest))
+    except Exception as e:
+        logger.exception(
+            '%s: Unknown problem retrieving data from AWS (%s)' %
+            (inspect.stack()[0][3], str(e)))
+        return False
+    return True
 
 
 def options(parser, help_menu=True):
