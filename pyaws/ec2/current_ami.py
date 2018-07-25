@@ -224,6 +224,8 @@ def ubuntu(profile, os, region=None, detailed=False, debug=False):
                 ])
 
             # need to find ami with latest date returned
+            if debug:
+                print(json.dumps(r, indent=4))
             newest = sorted(r['Images'], key=lambda k: k['CreationDate'])[-1]
             metadata[region] = newest
             amis[region] = newest['ImageId']
@@ -265,19 +267,21 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
         latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
     elif 'ubuntu' in imagetype:
-        latest = redhat(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
+        latest = ubuntu(profile=profile, os=os_version(imagetype), region=rgn, detailed=details, debug=debug)
 
     # return appropriate response format
     if format == 'json' and not filename:
         export_json_object(dict_obj=latest)
-        sys.exit(exit_codes['EX_OK']['Code'])
 
     elif format == 'json' and filename:
         export_json_object(dict_obj=latest, filename=filename)
-        sys.exit(exit_codes['EX_OK']['Code'])
 
     elif format == 'text' and not filename:
-        print('{}'.format(latest))
+        if rgn:
+            print('{}'.format(latest[rgn]))
+        else:
+            print('{}'.format(latest))
+
 
 
 def options(parser, help_menu=True):
