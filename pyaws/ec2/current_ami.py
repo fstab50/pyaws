@@ -244,6 +244,16 @@ def ubuntu(profile, os, region=None, detailed=False, debug=False):
     return amis
 
 
+def is_tty():
+    """
+    Summary:
+        Determines if output is displayed to the screen or redirected
+    Returns:
+        True if tty terminal | False is redirected, TYPE: bool
+    """
+    return sys.stdout.isatty()
+
+
 def os_version(imageType):
     """ Returns the version when provided redhat AMI type """
     return ''.join(re.split('(\d+)', imageType)[1:])
@@ -288,7 +298,11 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
 
         # return appropriate response format
         if format == 'json' and not filename:
-            r = export_json_object(dict_obj=latest)
+            if is_tty():
+                r = export_json_object(dict_obj=latest)
+            else:
+                print(json.dumps(latest, indent=4))
+                r = True
 
         elif format == 'json' and filename:
             r = export_json_object(dict_obj=latest, filename=filename)
