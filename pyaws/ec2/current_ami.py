@@ -256,7 +256,7 @@ def format_text(json_object):
         for k,v in json_object.items():
             row = '%s:\t%s\n' % (str(k), str(v))
             block += row
-        print(block[:-2])
+        print(block[:-1])
     except KeyError as e:
         logger.exception(
             '%s: json_object does not appear to be json structure. Error (%s)' %
