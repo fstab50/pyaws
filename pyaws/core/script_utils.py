@@ -263,7 +263,7 @@ def config_init(config_file, json_config_obj, config_dirname=None):
     return r
 
 
-def export_json_object(dict_obj, filename=None):
+def export_json_object(dict_obj, filename=None, logging=True):
     """
     Summary:
         exports object to block filesystem object
@@ -292,14 +292,16 @@ def export_json_object(dict_obj, filename=None):
         else:
             json_str = json.dumps(dict_obj, indent=4, sort_keys=True)
             print(highlight(json_str, lexers.JsonLexer(), formatters.TerminalFormatter()).strip())
-            logger.info('%s: successful export to stdout' % inspect.stack()[0][3])
+            if logging:
+                logger.info('%s: successful export to stdout' % inspect.stack()[0][3])
             return True
     except OSError as e:
         logger.critical(
             '%s: export_file_object: error writing to %s to filesystem. Error: %s' %
             (inspect.stack()[0][3], filename, str(e)))
         return False
-    logger.info('export_file_object: successful export to %s' % filename)
+    if logging:
+        logger.info('export_file_object: successful export to %s' % filename)
     return True
 
 
