@@ -40,14 +40,13 @@ except KeyError as e:
     raise e
 
 else:
-
     # project
     PACKAGE = 'pyaws'
     LICENSE = 'MIT'
     LICENSE_DESC = 'MIT'
 
     # logging parameters
-    enable_logging = False
+    enable_logging = True
     log_mode = 'FILE'
     log_filename = PACKAGE + '.log'
     log_dir = os_parityPath(user_home + '/' + 'logs')
