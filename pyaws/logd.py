@@ -59,14 +59,12 @@ def getLogger(*args, **kwargs):
     else:
         syslog_facility = 'user'
 
-
     # all formats
     asctime_format = "%Y-%m-%d %H:%M:%S"
 
     # objects
     logger = logging.getLogger(*args, **kwargs)
     logger.propagate = False
-
 
     try:
         if not logger.handlers:
