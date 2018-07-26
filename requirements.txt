@@ -4,12 +4,11 @@ botocore
 colorama
 docutils
 jmespath
-pyasn1
 Pygments
 python-dateutil
 pytz
 PyYAML
-rsa
+requests
 s3transfer
 six
 twine
