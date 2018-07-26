@@ -14,7 +14,6 @@ Module Attributes:
 """
 
 import inspect
-import platform
 import logging
 from pyaws import __version__
 from pyaws.core.script_utils import get_os, os_parityPath
