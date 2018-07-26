@@ -291,7 +291,7 @@ def export_json_object(dict_obj, filename=None):
                     (inspect.stack()[0][3], str(e)))
         else:
             json_str = json.dumps(dict_obj, indent=4, sort_keys=True)
-            print(highlight(json_str, lexers.JsonLexer(), formatters.TerminalFormatter()))
+            print(highlight(json_str, lexers.JsonLexer(), formatters.TerminalFormatter()).strip())
             logger.info('%s: successful export to stdout' % inspect.stack()[0][3])
             return True
     except OSError as e:
