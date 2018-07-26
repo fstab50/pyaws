@@ -300,7 +300,7 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
         # return appropriate response format
         if format == 'json' and not filename:
             if is_tty():
-                r = export_json_object(dict_obj=latest)
+                r = export_json_object(dict_obj=latest, logging=False)
             else:
                 print(json.dumps(latest, indent=4))
                 r = True
