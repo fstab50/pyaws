@@ -6,7 +6,6 @@ import re
 import sys
 import json
 import inspect
-from pygments import highlight, lexers, formatters
 import boto3
 from pyaws import logd, __version__
 from botocore.exceptions import ClientError
@@ -22,15 +21,16 @@ except Exception:
 logger = logd.getLogger(__version__)
 VALID_FORMATS = ('json', 'text')
 VALID_AMI_TYPES = (
-        'amazonlinux1', 'amazonlinux2', 'redhat7.4', 'redhat7.5', 'ubuntu14.04', 'ubuntu16.04'
+        'amazonlinux1', 'amazonlinux2', 'redhat7.3', 'redhat7.4', 'redhat7.5',
+        'ubuntu14.04', 'ubuntu16.04'
     )
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 
 # AWS Marketplace Owner IDs
-UBUNTU='099720109477'
-AMAZON='137112412989'
-CENTOS='679593333241'
-REDHAT='679593333241'
+UBUNTU = '099720109477'
+AMAZON = '137112412989'
+CENTOS = '679593333241'
+REDHAT = '679593333241'
 
 
 def get_regions(profile):
@@ -40,7 +40,8 @@ def get_regions(profile):
         client = boto3_session(service='ec2', profile=profile)
 
     except ClientError as e:
-        logger.exception('%s: Boto error while retrieving regions (%s)' %
+        logger.exception(
+            '%s: Boto error while retrieving regions (%s)' %
             (inspect.stack()[0][3], str(e)))
         raise e
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
