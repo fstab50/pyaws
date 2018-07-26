@@ -28,7 +28,7 @@ from pyaws.core.colors import Colors
 from pyaws import __version__
 
 # globals
-MODULE_VERSION = '1.11'
+MODULE_VERSION = '1.12'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
@@ -299,9 +299,8 @@ def export_json_object(dict_obj, filename=None):
             '%s: export_file_object: error writing to %s to filesystem. Error: %s' %
             (inspect.stack()[0][3], filename, str(e)))
         return False
-    else:
-        logger.info('export_file_object: successful export to %s' % filename)
-        return True
+    logger.info('export_file_object: successful export to %s' % filename)
+    return True
 
 
 def import_file_object(filename):

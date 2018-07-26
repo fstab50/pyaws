@@ -251,6 +251,17 @@ def os_version(imageType):
 
 def format_text(json_object):
     """ Formats json object into text format """
+    block = ''
+    try:
+        for k,v in json_object.items():
+            row = '%s:\t%s\n' % (str(k), str(v))
+            block += row
+        print(block[:-2])
+    except KeyError as e:
+        logger.exception(
+            '%s: json_object does not appear to be json structure. Error (%s)' %
+            (inspect.stack()[0][3], str(e))
+            )
     return True
 
 
@@ -277,22 +288,20 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
 
         # return appropriate response format
         if format == 'json' and not filename:
-            export_json_object(dict_obj=latest)
+            r = export_json_object(dict_obj=latest)
 
         elif format == 'json' and filename:
-            export_json_object(dict_obj=latest, filename=filename)
+            r = export_json_object(dict_obj=latest, filename=filename)
 
         elif format == 'text' and not filename:
-            if rgn:
-                print('{}'.format(latest[rgn]))
-            else:
-                print('{}'.format(latest))
+            r = format_text(latest)
+
     except Exception as e:
         logger.exception(
             '%s: Unknown problem retrieving data from AWS (%s)' %
             (inspect.stack()[0][3], str(e)))
         return False
-    return True
+    return r
 
 
 def options(parser, help_menu=True):
