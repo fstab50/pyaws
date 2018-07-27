@@ -6,7 +6,6 @@ import re
 import sys
 import json
 import inspect
-import boto3
 from pyaws import logd, __version__
 from botocore.exceptions import ClientError
 from pyaws.core.session import authenticated, boto3_session
