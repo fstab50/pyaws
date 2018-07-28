@@ -10,6 +10,7 @@ from pyaws import logd, __version__
 from botocore.exceptions import ClientError
 from pyaws.core.session import authenticated, boto3_session
 from pyaws.core.script_utils import stdout_message, export_json_object
+from pyaws.ec2 import help_menu
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -30,6 +31,18 @@ UBUNTU = '099720109477'
 AMAZON = '137112412989'
 CENTOS = '679593333241'
 REDHAT = '679593333241'
+
+
+def help_menu():
+    """
+    Displays help menu contents
+    """
+    print(
+        Colors.BOLD + '\n\t\t\t  ' + 'machineimage' + Colors.RESET +
+        ' help contents'
+        )
+    print(menu_body)
+    return
 
 
 def get_regions(profile):
@@ -318,7 +331,7 @@ def main(profile, imagetype, format, details, debug, filename='', rgn=None):
     return r
 
 
-def options(parser, help_menu=True):
+def options(parser, help_menu=False):
     """
     Summary:
         parse cli parameter options
@@ -333,7 +346,7 @@ def options(parser, help_menu=True):
     parser.add_argument("-n", "--filename", nargs='?', default='', type=str, required=False)
     parser.add_argument("-D", "--debug", dest='debug', default=False, action='store_true', required=False)
     parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
-    #parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
+    parser.add_argument("-h", "--help", dest='help', action='store_true', required=False)
     return parser.parse_args()
 
 
@@ -343,7 +356,7 @@ def init_cli():
         parser = argparse.ArgumentParser(add_help=True)
         args = options(parser)
     except Exception as e:
-        #help_menu()
+        help_menu()
         stdout_message(str(e), 'ERROR')
         sys.exit(exit_codes['E_MISC']['Code'])
 
@@ -355,8 +368,11 @@ def init_cli():
         print('debug flag: %b', str(args.debug))
 
     if len(sys.argv) == 1:
-        #help_menu()
+        help_menu()
         sys.exit(exit_codes['EX_OK']['Code'])
+
+    elif args.help:
+        help_menu()
 
     elif authenticated(profile=args.profile):
         # execute ami operation
