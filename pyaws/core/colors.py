@@ -2,7 +2,7 @@
 Summary:
     ANSI color and formatting code class
     See: http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-
+    VERSION:  1.11
 Args:
     None
 
@@ -49,25 +49,26 @@ class Colors():
     BRIGHTWHITE = '\033[38;5;15m'
 
     # background colors
-    BKGND_WHITE_BOLD = '\u001b[47;1m'
-    BKGND_WHITE = '\u001b[47m'
     BKGND_BLACK = '\u001b[40m'
-    BKGND_RED = '\u001b[41m'
-    BKGND_GREEN = '\u001b[42m'
-    BKGND_YELLOW = '\u001b[43m'
     BKGND_BLUE = '\u001b[44m'
-    BKGND_MAGENTA = '\u001b[45m'
     BKGND_CYAN = '\u001b[46m'
+    BKGND_GREEN = '\u001b[42m'
+    BKGND_MAGENTA = '\u001b[45m'
+    BKGND_RED = '\u001b[41m'
+    BKGND_WHITE = '\u001b[47m'
+    BKGND_WHITE_BOLD = '\u001b[47;1m'
+    BKGND_YELLOW = '\u001b[43m'
 
     # background colors; bright
     BKGND_BRIGHT_BLACK = '\u001b[40;1m'
-    BKGND_BRIGHT_RED = '\u001b[41;1m'
-    BKGND_BRIGHT_GREEN = '\u001b[42;1m'
-    BKGND_BRIGHT_YELLOW = '\u001b[43;1m'
     BKGND_BRIGHT_BLUE = '\u001b[44;1m'
-    BKGND_BRIGHT_MAGENTA = '\u001b[45;1m'
     BKGND_BRIGHT_CYAN = '\u001b[46;1m'
+    BKGND_BRIGHT_GREEN = '\u001b[42;1m'
+    BKGND_BRIGHT_GRAY = '\u001b[38;1m'
+    BKGND_BRIGHT_MAGENTA = '\u001b[45;1m'
+    BKGND_BRIGHT_RED = '\u001b[41;1m'
     BKGND_BRIGHT_WHITE = '\u001b[47;1m'
+    BKGND_BRIGHT_YELLOW = '\u001b[43;1m'
 
     # formats
     BOLD = '\033[1m'
