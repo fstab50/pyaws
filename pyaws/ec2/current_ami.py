@@ -10,7 +10,7 @@ from pyaws import logd, __version__
 from botocore.exceptions import ClientError
 from pyaws.core.session import authenticated, boto3_session
 from pyaws.core.script_utils import stdout_message, export_json_object
-from pyaws.ec2 import help_menu
+from pyaws.ec2.help_menu import menu_body
 from pyaws.core.colors import Colors
 
 try:
@@ -42,7 +42,7 @@ def help_menu():
         Colors.BOLD + '\n\t\t\t  ' + 'machineimage' + Colors.RESET +
         ' help contents'
         )
-    print(help_menu.menu_body)
+    sys.stdout.write(menu_body)
     return
 
 
@@ -354,7 +354,7 @@ def options(parser, help_menu=False):
 def init_cli():
     """ Collect parameters and call main """
     try:
-        parser = argparse.ArgumentParser(add_help=True)
+        parser = argparse.ArgumentParser(add_help=False)
         args = options(parser)
     except Exception as e:
         help_menu()
