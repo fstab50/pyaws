@@ -15,9 +15,9 @@ PARAM_ACCENT = Colors.WHITE
 
 synopsis_cmd = (
     Colors.RESET + PKG_ACCENT + PACKAGE +
-    PARAM_ACCENT + '--image ' + Colors.RESET + '{amazonlinux1, amazonlinux2, redhat7.5, ubuntu16.04}' +
+    PARAM_ACCENT + '--image ' + Colors.RESET + '{OS_TYPE}' +
     PARAM_ACCENT + ' --profile ' + Colors.RESET + ' [PROFILE] ' +
-    PARAM_ACCENT + ' --region ' + Colors.RESET + ' [REGION] ' +
+    PARAM_ACCENT + ' --region ' + Colors.RESET + ' [REGION] '
     )
 
 url_doc = Colors.URL + 'http://pyaws.readthedocs.io' + Colors.RESET

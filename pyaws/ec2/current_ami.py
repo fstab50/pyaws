@@ -11,6 +11,7 @@ from botocore.exceptions import ClientError
 from pyaws.core.session import authenticated, boto3_session
 from pyaws.core.script_utils import stdout_message, export_json_object
 from pyaws.ec2 import help_menu
+from pyaws.core.colors import Colors
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
@@ -41,7 +42,7 @@ def help_menu():
         Colors.BOLD + '\n\t\t\t  ' + 'machineimage' + Colors.RESET +
         ' help contents'
         )
-    print(menu_body)
+    print(help_menu.menu_body)
     return
 
 
