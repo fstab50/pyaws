@@ -398,7 +398,7 @@ def init_cli():
             sys.exit(exit_codes['E_DEPENDENCY']['Code'])
     else:
         stdout_message(
-            'Authenication Failed to AWS Account for user %s' % profile,
+            'Authenication Failed to AWS Account for user %s' % args.profile,
             prefix='AUTH',
             severity='WARNING'
             )
