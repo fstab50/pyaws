@@ -1,5 +1,4 @@
 import os
-import sys
 import inspect
 import subprocess
 import boto3
@@ -23,7 +22,8 @@ logger = loggers.getLogger(__version__)
 def _profile_prefix(profile, prefix='gcreds'):
     """
     Summary:
-        Determines if temp credential used;
+        Determines if temporary STS credentials provided via
+        local awscli config;
         - if yes, returns profile with correct prefix
         - if no, returns profile (profile_name) unaltered
         - Note:  Caller is parse_profiles(), Not to be called directly
@@ -33,8 +33,10 @@ def _profile_prefix(profile, prefix='gcreds'):
     Returns:
         awscli profilename, TYPE str
     """
+
     stderr = ' 2>/dev/null'
     tempProfile = prefix + '-' + profile
+
     try:
         if subprocess.getoutput(f'aws configure get profile.{profile}.aws_access_key_id {stderr}'):
             return profile
@@ -63,7 +65,9 @@ def parse_profiles(profiles):
     Returns:
         list of awscli profile names, TYPE: list
     """
+
     profile_list = []
+
     try:
         if isinstance(profiles, list):
             return [_profile_prefix(x.strip()) for x in profiles]
@@ -108,7 +112,7 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
         raise
     except ProfileNotFound:
         msg = (
-            '%s: The profile (%s) was not found in your local config. Exit.' %
+            '%s: The profile (%s) was not found in your local config' %
             (inspect.stack()[0][3], profile))
         stdout_message(msg, 'FAIL')
         logger.warning(msg)
