@@ -30,6 +30,7 @@ class Colors():
     YELLOW = '\033[93m'
     RED = '\033[91m'
     ORANGE = '\033[38;5;95;38;5;214m'
+    GOLD3 = '\033[38;5;95;38;5;178m'                    # yellow-orange
     WHITE = '\033[37m'
     WHITEGRAY = '\033[38;5;95;38;5;250m'                # white-gray
     LT1GRAY = '\033[38;5;95;38;5;245m'                  # light gray
