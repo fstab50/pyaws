@@ -93,7 +93,6 @@ setup(
     entry_points={
         'console_scripts': [
             'pyaws=pyaws.cli:init_cli',
-            'machineimage=pyaws.ec2.current_ami:init_cli',
             'pyconfig=pyaws.cli:option_configure'
         ]
     },
