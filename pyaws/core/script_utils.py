@@ -24,7 +24,7 @@ import re
 import logging
 import inspect
 from pygments import highlight, lexers, formatters
-from pyaws.core.colors import Colors
+from pyaws.colors import Colors
 from pyaws import __version__
 
 # globals
