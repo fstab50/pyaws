@@ -1,5 +1,8 @@
 from pyaws._version import __version__ as version
 from pyaws import environment
+from pyaws.colors import Colors
+from pyaws import session 
+from pyaws.core import script_utils
 
 __author__ = 'Blake Huber'
 __version__ = version
