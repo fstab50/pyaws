@@ -32,13 +32,7 @@ import pyaws
 requires = [
     'boto3',
     'botocore',
-    'docutils',
-    'jmespath',
-    'PyYAML',
-    'Pygments',
-    'pytz',
-    's3transfer',
-    'six'
+    'Pygments'
 ]
 
 
