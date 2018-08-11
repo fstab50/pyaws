@@ -28,7 +28,7 @@ from pyaws.colors import Colors
 from pyaws import __version__
 
 # globals
-MODULE_VERSION = '1.12'
+MODULE_VERSION = '1.14'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 

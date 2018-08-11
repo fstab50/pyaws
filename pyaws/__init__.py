@@ -13,5 +13,3 @@ __status__ = "Development"
 
 # the following imports require __version__
 from pyaws.colors import Colors
-from pyaws import session
-from pyaws.core import script_utils

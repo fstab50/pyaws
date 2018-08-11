@@ -3,7 +3,7 @@ import inspect
 import subprocess
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
-from pyaws.core.script_utils import stdout_message
+from pyaws.script_utils import stdout_message
 from pyaws.core import loggers
 from pyaws._version import __version__
 
