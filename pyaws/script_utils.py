@@ -28,7 +28,7 @@ from pyaws.colors import Colors
 from pyaws import __version__
 
 # globals
-MODULE_VERSION = '1.14'
+MODULE_VERSION = '1.15'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
@@ -413,8 +413,7 @@ def read_local_config(cfg):
     return {}
 
 
-def stdout_message(message, prefix='INFO', quiet=False,
-                                    multiline=False, indent=4, severity=''):
+def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=4, severity=''):
     """
     Summary:
         Prints message to cli stdout while indicating type and severity
