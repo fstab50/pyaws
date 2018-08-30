@@ -63,7 +63,9 @@ def parse_profiles(profiles):
             - a single profile_name (str)
             - a file containing multiple profile_names, 1 per line
     Returns:
-        list of awscli profile names, TYPE: list
+        - list of awscli profilenames, TYPE: list
+        OR
+        - single profilename, TYPE: str
     """
 
     profile_list = []
@@ -76,7 +78,7 @@ def parse_profiles(profiles):
                 for line in f1:
                     profile_list.append(_profile_prefix(line.strip()))
         else:
-            return [_profile_prefix(profiles.strip())]
+            return _profile_prefix(profiles.strip())
     except Exception as e:
         logger.exception(
             f'{inspect.stack()[0][3]}: Unknown error while converting profile_names from local awscli config: {e}'
