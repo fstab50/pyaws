@@ -42,7 +42,8 @@ def default_region(profile):
     """
     Summary:
         Determines the default region of profilename present in the local awscli
-        configuration or set in the environment via 'AWS_DEFAULT_REGION' variable
+        configuration or set in the environment via 'AWS_DEFAULT_REGION' variable.
+        If all else fails, returns region code 'us-east-1' as a default region.
     Args:
         profile (str): profile_name of a valid profile from local awscli config
     Returns:
