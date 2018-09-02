@@ -2,6 +2,8 @@
 **pyaws** | Utilities Library for Amazon Web Services (AWS)
 -----------------------------------------------------------
 
+PACKAGE: pyaws
+
 ``pyaws``: reusable library of utility classes and functions common AWS use cases and capabilities:
 
 * uploading to s3
