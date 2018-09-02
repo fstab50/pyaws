@@ -29,7 +29,7 @@ from pyaws.colors import Colors
 from pyaws import __version__
 
 # globals
-MODULE_VERSION = '1.15'
+MODULE_VERSION = '1.16'
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
 
@@ -503,12 +503,23 @@ def userchoice_mapping(choice):
         map_dict[index] = letters[index - 1]
     # process user input
     try:
-        if type(choice) == str:
-            for k, v in map_dict.items():
-                if v == choice.lower():
-                    return k
+        if isinstance(choice, str):
+            if choice in letters:
+                for k, v in map_dict.items():
+                    if v == choice.lower():
+                        return k
+            elif int(choice) in range(1, 27):
+                # integer string provided
+                return map_dict[int(choice)]
+            else:
+                # not in letters or integer string outside range
+                return None
         elif choice not in range(1, 27):
             return None
-        return map_dict[choice]
     except KeyError:
+        # integer outside range provided
         return None
+    except ValueError:
+        # string outside range provided
+        return None
+    return map_dict[choice]
