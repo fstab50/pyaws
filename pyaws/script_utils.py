@@ -144,56 +144,6 @@ def debug_mode(header, data_object, debug=False, halt=False):
     return True
 
 
-def get_os(detailed=False):
-    """
-    Summary:
-        Retrieve local operating system environment characteristics
-    Args:
-        :user (str): USERNAME, only required when run on windows os
-    Returns:
-        TYPE: dict object containing key, value pairs describing
-        os information
-    """
-    try:
-
-        os_type = platform.system()
-
-        if os_type == 'Linux':
-            os_detail = platform.uname()
-            distribution = platform.linux_distribution()
-            HOME = os.environ['HOME']
-            username = os.getenv('USER')
-        elif os_type == 'Windows':
-            username = os.getenv('username')
-            HOME = 'C:\\Users\\' + username
-        else:
-            logger.warning('Unsupported OS. No information')
-            os_type = 'Java'
-            platform = 'unknown'
-            HOME = os.getenv('HOME')
-    except OSError as e:
-        raise e
-    except Exception as e:
-        logger.exception(
-            '%s: problem determining local os environment %s' %
-            (inspect.stack()[0][3], str(e))
-            )
-    if detailed and os_type == 'Linux':
-        return {
-                'os_type': os_type,
-                'os_detail': os_detail,
-                'linux_distribution': distribution,
-                'HOME': HOME
-            }
-    elif detailed:
-        return {
-                'os_type': os_type,
-                'platform': platform,
-                'HOME': HOME
-            }
-    return {'os_type': os_type}
-
-
 def awscli_defaults(os_type=None):
     """
     Summary:
@@ -306,6 +256,59 @@ def export_json_object(dict_obj, filename=None, logging=True):
     if logging:
         logger.info('export_file_object: successful export to %s' % filename)
     return True
+
+
+def get_os(detailed=False):
+    """
+    Summary:
+        Retrieve local operating system environment characteristics
+    Args:
+        :user (str): USERNAME, only required when run on windows os
+    Returns:
+        TYPE: dict object containing key, value pairs describing
+        os information
+    """
+    try:
+
+        os_type = platform.system()
+
+        if os_type == 'Linux':
+            os_detail = platform.uname()
+            distribution = platform.linux_distribution()[0]
+            HOME = os.getenv('HOME')
+            username = os.getenv('USER')
+        elif os_type == 'Windows':
+            username = os.getenv('username')
+            HOME = 'C:\\Users\\' + username
+        else:
+            logger.warning('Unsupported OS. No information')
+            os_type = 'Java'
+            os_detail = 'unknown'
+            HOME = os.getenv('HOME')
+
+    except OSError as e:
+        raise e
+    except Exception as e:
+        logger.exception(
+            '%s: problem determining local os environment %s' %
+            (inspect.stack()[0][3], str(e))
+            )
+    if detailed and os_type == 'Linux':
+        return {
+                'os_type': os_type,
+                'os_detail': os_detail,
+                'linux_distribution': distribution,
+                'username': username,
+                'HOME': HOME
+            }
+    elif detailed:
+        return {
+                'os_type': os_type,
+                'os_detail': os_detail,
+                'username': username,
+                'HOME': HOME
+            }
+    return {'os_type': os_type}
 
 
 def import_file_object(filename):
