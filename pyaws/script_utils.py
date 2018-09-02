@@ -166,8 +166,11 @@ def get_os(detailed=False):
         elif os_type == 'Windows':
             username = os.getenv('username')
             HOME = 'C:\\Users\\' + username
-        elif os_type == 'Java':
+        else:
             logger.warning('Unsupported OS. No information')
+            os_type = 'Java'
+            platform = 'unknown'
+            HOME = os.getenv('HOME')
     except OSError as e:
         raise e
     except Exception as e:
@@ -188,8 +191,7 @@ def get_os(detailed=False):
                 'platform': platform,
                 'HOME': HOME
             }
-    elif not detailed:
-        return {'os_type': os_type}
+    return {'os_type': os_type}
 
 
 def awscli_defaults(os_type=None):
