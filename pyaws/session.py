@@ -15,8 +15,8 @@ except Exception:
     splitchar = '\\'    # character for splitting paths (window
 
 
-DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION']
 logger = loggers.getLogger(__version__)
+DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION'] or 'us-east-1'
 
 
 def _profile_prefix(profile, prefix='gcreds'):
@@ -98,7 +98,7 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
         TYPE: boto3 client object
     """
     try:
-        
+
         if profile and profile != 'default':
             session = boto3.Session(profile_name=profile)
             return session.client(service, region_name=region)
