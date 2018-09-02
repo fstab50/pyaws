@@ -98,14 +98,11 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
         TYPE: boto3 client object
     """
     try:
-        if profile:
-            if profile == 'default':
-                client = boto3.client(service, region_name=region)
-            else:
-                session = boto3.Session(profile_name=profile)
-                client = session.client(service, region_name=region)
-        else:
-            client = boto3.client(service, region_name=region)
+        
+        if profile and profile != 'default':
+            session = boto3.Session(profile_name=profile)
+            return session.client(service, region_name=region)
+
     except ClientError as e:
         logger.exception(
             "%s: IAM user or role not found (Code: %s Message: %s)" %
@@ -118,7 +115,7 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
             (inspect.stack()[0][3], profile))
         stdout_message(msg, 'FAIL')
         logger.warning(msg)
-    return client
+    return boto3.client(service, region_name=region)
 
 
 def authenticated(profile):
