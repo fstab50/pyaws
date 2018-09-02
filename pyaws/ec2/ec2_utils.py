@@ -62,15 +62,16 @@ def get_instances(region, profile=None):
     return vm_ids
 
 
-def get_regions(profile):
+def get_regions(profile=None):
     """ Return list of all regions """
     try:
-        if not profile:
+        if profile is None:
             profile = 'default'
         client = boto3_session(service='ec2', profile=profile)
 
     except ClientError as e:
-        logger.exception('%s: Boto error while retrieving regions (%s)' %
+        logger.exception(
+            '%s: Boto error while retrieving regions (%s)' %
             (inspect.stack()[0][3], str(e)))
         raise e
     return [x['RegionName'] for x in client.describe_regions()['Regions']]
@@ -110,7 +111,8 @@ def dns_hostname(instanceId, profile='default'):
         ip_info = [x['PrivateIpAddresses'][0] for x in r['Reservations'][0]['Instances'][0]['NetworkInterfaces']][0]
         private_name = r['Reservations'][0]['Instances'][0]['PrivateDnsName']
         public_name = r['Reservations'][0]['Instances'][0]['PublicDnsName']
-        """
+
+        """BELOW NEEDS DEBUGGING
         if ip_info.get('Association'):
             public_ip = ip_info['Association']['PublicIp']
             priv_ip = ip_info['PrivateIpAddress']
