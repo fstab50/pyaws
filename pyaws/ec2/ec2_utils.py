@@ -18,12 +18,11 @@ License:
 
 """
 import os
-import json
 import subprocess
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-from pyaws.core.session import boto3_session
+from pyaws.session import boto3_session
 from pyaws.core import loggers
 from pyaws._version import __version__
 
