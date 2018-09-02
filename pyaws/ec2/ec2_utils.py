@@ -37,7 +37,7 @@ logger = loggers.getLogger(__version__)
 # -- declarations -------------------------------------------------------------
 
 
-def default_region(profile):
+def default_region(profile='default'):
     """
     Summary:
         Determines the default region of profilename present in the local awscli
@@ -132,7 +132,7 @@ def dns_hostname(instanceId, profile='default'):
     """
     try:
         session = boto3.Session(profile_name=profile)
-        client = session.client('ec2', region_name=REGION)
+        client = session.client('ec2', region_name=default_region(profile))
         r = client.describe_instances(InstanceIds=[instanceId])
         # dict of ip information
         ip_info = [x['PrivateIpAddresses'][0] for x in r['Reservations'][0]['Instances'][0]['NetworkInterfaces']][0]
