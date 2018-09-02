@@ -18,21 +18,18 @@ License:
 
 """
 import os
-import json
 import datetime
-import socket
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-import loggers
-from _version import __version__
+from pyaws import logd, __version__
 
 
 # global objects
 
 
 # lambda custom log object
-logger = loggers.getLogger(__version__)
+logger = logd.getLogger(__version__)
 
 
 # -- declarations -------------------------------------------------------------
