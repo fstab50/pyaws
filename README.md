@@ -6,6 +6,6 @@
 
 * Script tools for use in Amazon Web Services, etc
 
- Version: 0.2.7
+ Version: 0.2.8
 
 * * *
