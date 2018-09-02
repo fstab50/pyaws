@@ -185,7 +185,7 @@ def get_os(detailed=False):
                 'linux_distribution': distribution,
                 'HOME': HOME
             }
-    elif detailed and os_type == 'Windows':
+    elif detailed:
         return {
                 'os_type': os_type,
                 'platform': platform,
