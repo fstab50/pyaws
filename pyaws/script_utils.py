@@ -23,6 +23,7 @@ import datetime
 import re
 import logging
 import inspect
+from string import ascii_lowercase
 from pygments import highlight, lexers, formatters
 from pyaws.colors import Colors
 from pyaws import __version__
@@ -474,3 +475,40 @@ def os_parityPath(path):
     if path.startswith('\\'):
         return 'C:' + path
     return path
+
+
+def userchoice_mapping(choice):
+    """
+    Summary:
+        Maps the number of an option presented to the user to the
+        correct letters in sequential a-z series when choice parameter
+        is provided as a number.
+
+        When given a letter as an input parameter (choice is a single
+        letter), returns the integer number corresponding to the letter
+        in the alphabet (a-z)
+
+        Examples:
+            - userchoice_mapping(3) returns 'c'
+            - userchoice_mapping('z') returns 26 (integer)
+    Args:
+        choice, TYPE: int or str
+    Returns:
+        ascii (lowercase), TYPE: str OR None
+    """
+    # prepare mapping dict containing all 26 letters
+    map_dict = {}
+    letters = ascii_lowercase
+    for index in range(1, 27):
+        map_dict[index] = letters[index - 1]
+    # process user input
+    try:
+        if type(choice) == str:
+            for k, v in map_dict.items():
+                if v == choice.lower():
+                    return k
+        elif choice not in range(1, 27):
+            return None
+        return map_dict[choice]
+    except KeyError:
+        return None
