@@ -19,7 +19,7 @@ License:
 """
 import os
 import json
-import socket
+import subprocess
 import inspect
 import boto3
 from botocore.exceptions import ClientError
@@ -36,6 +36,33 @@ logger = loggers.getLogger(__version__)
 
 
 # -- declarations -------------------------------------------------------------
+
+
+def default_region(profile):
+    """
+    Summary:
+        Determines the default region of profilename present in the local awscli
+        configuration or set in the environment via 'AWS_DEFAULT_REGION' variable
+    Args:
+        profile (str): profile_name of a valid profile from local awscli config
+    Returns:
+        AWS Region Code, TYPE str
+    """
+
+    stderr = ' 2>/dev/null'
+    region = subprocess.getoutput(f'aws configure get profile.{profile}.region {stderr}')
+
+    try:
+        if region:
+            return region
+        elif os.getenv('AWS_DEFAULT_REGION') is None:
+            os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    except Exception as e:
+        logger.exception(
+            f'{inspect.stack()[0][3]}: Unknown error while interrogating local awscli config: {e}'
+            )
+        raise
+    return os.getenv('AWS_DEFAULT_REGION')
 
 
 def get_instances(region, profile=None):
