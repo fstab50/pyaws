@@ -46,10 +46,16 @@ def convert_timedelta(duration):
     Returns:
         days, hours, minutes, seconds | TYPE: tuple (integers)
     """
-    days, seconds = duration.days, duration.seconds
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = (seconds % 60)
+    try:
+        days, seconds = duration.days, duration.seconds
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = (seconds % 60)
+    except Exception:
+        logger.exception(
+                f'{inspect.stack()[0][3]}: Input must be datetime.timedelta object'
+            )
+        return 0, 0, 0, 0
     return days, hours, minutes, seconds
 
 
@@ -85,8 +91,10 @@ def convert_dt_time(duration, return_iter=False):
         logger.exception(
             '%s: Type mismatch when converting timedelta objects (Code: %s)' %
             (inspect.stack()[0][3], str(e)))
+        raise e
     except Exception as e:
         logger.exception(
             '%s: Unknown error when converting datetime objects (Code: %s)' %
             (inspect.stack()[0][3], str(e)))
+        raise e
     return format_string
