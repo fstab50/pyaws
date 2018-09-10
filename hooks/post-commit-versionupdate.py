@@ -35,7 +35,7 @@ try:
         lines = f1.readlines()
         for index, line in enumerate(lines):
             if 'Version:' in line:
-                newline = ' '.join(line.split(' ')[:2]) + ' Version: ' + __version__ + '\n'
+                newline = '   Version: ' + __version__ + '\n'
                 lines[index] = newline
                 break
         f1.close()
