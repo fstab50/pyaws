@@ -273,11 +273,12 @@ def get_os(detailed=False):
         os_type = platform.system()
 
         if os_type == 'Linux':
-            os_detail = platform.uname()
+            os_detail = platform.platform()
             distribution = platform.linux_distribution()[0]
             HOME = os.getenv('HOME')
             username = os.getenv('USER')
         elif os_type == 'Windows':
+            os_detail = platform.platform()
             username = os.getenv('username')
             HOME = 'C:\\Users\\' + username
         else:
