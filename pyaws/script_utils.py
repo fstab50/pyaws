@@ -279,13 +279,14 @@ def get_os(detailed=False):
             username = os.getenv('USER')
         elif os_type == 'Windows':
             os_detail = platform.platform()
-            username = os.getenv('username')
+            username = os.getenv('username') or os.getenv('USER')
             HOME = 'C:\\Users\\' + username
         else:
             logger.warning('Unsupported OS. No information')
             os_type = 'Java'
             os_detail = 'unknown'
             HOME = os.getenv('HOME')
+            username = os.getenv('USER')
 
     except OSError as e:
         raise e
