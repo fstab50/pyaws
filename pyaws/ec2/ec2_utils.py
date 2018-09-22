@@ -65,28 +65,35 @@ def default_region(profile='default'):
     return os.getenv('AWS_DEFAULT_REGION')
 
 
-def get_instances(region, profile=None):
+def get_instances(region, profile=None, pageSize=100):
     """
     Returns: all EC2 instance Ids in a region
     """
-    vm_ids = []
+    ids = []
     try:
         if profile:
             session = boto3.Session(profile_name=profile, region_name=region)
             client = session.client('ec2')
         else:
             client = boto3.client('ec2', region_name=region)
-        r = client.describe_instances()
-        for detail in [x['Instances'] for x in r['Reservations']]:
-            for instance in detail:
-                vm_ids.append(instance['InstanceId'])
+
+        # find ebs volumes associated with instances
+        paginator = client.get_paginator('describe_instances')
+        response_iterator = paginator.paginate(PaginationConfig={'PageSize': pageSize})
+
+        # collect all instances in region
+        for page in response_iterator:
+            # collect all instanceIds (not used)
+            for x in [x[0]['InstanceId'] for x in [x['Instances'] for x in page['Reservations']]]:
+                ids.append(x)
+
     except ClientError as e:
         logger.critical(
             "%s: problem retrieving instances in region %s (Code: %s Message: %s)" %
             (inspect.stack()[0][3], str(region), e.response['Error']['Code'],
             e.response['Error']['Message']))
         raise e
-    return vm_ids
+    return ids
 
 
 def get_regions(profile=None):
