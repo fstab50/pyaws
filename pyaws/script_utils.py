@@ -450,22 +450,47 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
     """
     prefix = prefix.upper()
     tabspaces = int(indent)
+
     # prefix color handling
-    choices = ('RED', 'BLUE', 'WHITE', 'GREEN', 'ORANGE')
     critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
 
     if quiet:
+
+        return True
+
+    elif severity.upper() and prefix not in critical_status:
+
+        stdout_message(
+            'Prefix must be in critical status list: %s' % str(critical_status),
+            prefix='WARN'
+            )
         return False
+
     else:
+        print(f'\nPrefix value is: {prefix}\n')
+
         if prefix in critical_status or severity.upper() == 'CRITICAL':
             header = (Colors.YELLOW + '\t[ ' + Colors.RED + prefix +
                       Colors.YELLOW + ' ]' + Colors.RESET + ': ')
-        elif severity.upper() == 'WARNING':
+
+        elif severity.upper() in ('WARN', 'WARNING'):
             header = (Colors.YELLOW + '\t[ ' + Colors.ORANGE + prefix +
                       Colors.YELLOW + ' ]' + Colors.RESET + ': ')
+
+        elif prefix is 'OK' or prefix == 'OK':
+            header = (
+                    Colors.YELLOW + '\t[  ' + Colors.BOLD + Colors.GREEN + prefix +
+                    Colors.YELLOW + '  ]' + Colors.RESET + ': '
+                )
+
+        elif prefix in ('DONE', 'GOOD'):
+            header = (Colors.YELLOW + '\t[ ' + Colors.BOLD + Colors.GREEN + prefix +
+                      Colors.YELLOW + ' ]' + Colors.RESET + ': ')
+
         else:    # default color scheme
             header = (Colors.YELLOW + '\t[ ' + Colors.DARKCYAN + prefix +
                       Colors.YELLOW + ' ]' + Colors.RESET + ': ')
+
         if multiline:
             print(header.expandtabs(tabspaces) + str(message))
         else:
