@@ -171,3 +171,64 @@ def dns_hostname(instanceId, profile='default'):
             '%s: No dns info from reverse lookup - Unknown host' % inspect.stack()[0][3])
         return ('', [], '', [ip_info['PrivateIpAddress']])
     return public_name or private_name
+
+
+def get_attached_ids(region, profile=None, instanceId=None, pageSize=200):
+    """
+    Summary:
+        - Audits the entire namespace of an AWS Account (essentially an
+          entire region) for resource ids of the type requested (with paging)
+        - If instance_id given, returns resources attached only to the instance
+    Args:
+        instanceId (str): a single EC2 instance Identifier
+        pageSize (int): paging is used,
+    Returns:
+        vids (str): ebs volume ids attached to instanceId
+        enids (str): elastic network_interface ids attached to instanceId
+    Raises:
+        botocore ClientError
+    """
+    if not pageSize:
+
+        pageSize = 200
+
+    try:
+        logger.info('%s:  function start' % inspect.stack()[0][3])
+        # paging:  FUTURE WHEN RETRIVE ENTIRE NAMESPACE
+        #paginator = client.get_paginator('describe_instances')
+        #response_iterator = paginator.paginate(PaginationConfig={'PageSize': pageSize})
+        #for page in response_iterator:
+        if profile:
+            session = boto3.Session(profile_name=profile, region_name=region)
+            client = session.client('ec2')
+        else:
+            client = boto3.client('ec2', region_name=region)
+
+        # find attached volumes
+        response = client.describe_volumes(
+                Filters=[
+                    {
+                        'Name': 'attachment.instance-id',
+                        'Values': [instanceId]
+                    },
+                ]
+            )
+        vids = [y['VolumeId'] for y in [x['Attachments'][0] for x in response['Volumes']]]
+        logger.info('%d volume(s) found for instance %s' % (len(vids), instanceId))
+
+        # attached enis
+        r = client.describe_network_interfaces(
+                Filters=[
+                    {
+                        'Name': 'attachment.instance-id',
+                        'Values': [instanceId]
+                    },
+                ]
+            )
+        enids = [x['NetworkInterfaceId'] for x in r['NetworkInterfaces']]
+    except ClientError as e:
+        logger.exception(
+            '%s: Problem while retrieving list of volumes for region %s' %
+            (inspect.stack()[0][3], REGION))
+        return [], []
+    return vids, enids
