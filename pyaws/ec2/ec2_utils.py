@@ -232,3 +232,58 @@ def get_attached_ids(region, profile=None, instanceId=None, pageSize=200):
             (inspect.stack()[0][3], REGION))
         return [], []
     return vids, enids
+
+
+def namespace_volumes_eids(region, profile=None, pageSize=200):
+    """
+    Summary:
+        - Audits the entire namespace of an AWS Account (essentially an
+          entire region) for resource ids of the type requested (with paging)
+    Args:
+        pageSize (int): paging is used,
+    Returns:
+        vids (str): ebs volume ids attached to instanceId
+        enids (str): elastic network_interface ids attached to instanceId
+    Raises:
+        botocore ClientError
+    """
+
+    vids, enids = [], []
+
+    try:
+        logger.info('%s:  function start' % inspect.stack()[0][3])
+
+        if profile:
+            session = boto3.Session(profile_name=profile, region_name=region)
+            client = session.client('ec2')
+        else:
+            client = boto3.client('ec2', region_name=region)
+
+        # find ebs volumes associated with instances
+        paginator = client.get_paginator('describe_volumes')
+        response_iterator = paginator.paginate(PaginationConfig={'PageSize': pageSize})
+
+        # collect all instances in region
+        for page in response_iterator:
+            # collect all instanceIds (not used)
+            for z in [y['VolumeId'] for y in [x['Attachments'][0] for x in page['Volumes']]]:
+                vids.append(z)
+
+        logger.info('%d volume(s) found in region %s' % (len(vids), region))
+
+        # find enis
+        paginator = client.get_paginator('describe_network_interfaces')
+        response_iterator = paginator.paginate(PaginationConfig={'PageSize': pageSize})
+
+        # collect all instances in region
+        for page in response_iterator:
+            # collect all instanceIds (not used)
+            for z in [x['NetworkInterfaceId'] for x in page['NetworkInterfaces']]:
+                enids.append(z)
+
+    except ClientError as e:
+        logger.exception(
+            '%s: Problem while retrieving list of volumes for region %s' %
+            (inspect.stack()[0][3], REGION))
+        return [], []
+    return vids, enids
