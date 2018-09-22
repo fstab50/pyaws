@@ -173,12 +173,11 @@ def dns_hostname(instanceId, profile='default'):
     return public_name or private_name
 
 
-def get_attached_ids(region, profile=None, instanceId=None, pageSize=200):
+def get_attached_ids(region, instanceId, profile=None):
     """
     Summary:
-        - Audits the entire namespace of an AWS Account (essentially an
-          entire region) for resource ids of the type requested (with paging)
-        - If instance_id given, returns resources attached only to the instance
+        Audits the entire namespace of an AWS Account (essentially an
+        entire region) for resource ids of the type requested
     Args:
         instanceId (str): a single EC2 instance Identifier
         pageSize (int): paging is used,
@@ -188,50 +187,37 @@ def get_attached_ids(region, profile=None, instanceId=None, pageSize=200):
     Raises:
         botocore ClientError
     """
-    if not pageSize:
+    vids, eids = [], []
 
-        pageSize = 200
+    if profile:
+        session = boto3.Session(profile_name=profile, region_name=region)
+        ec2 = session.resource('ec2')
+    else:
+        ec2 = boto3.resource('ec2', region_name=region)
 
     try:
         logger.info('%s:  function start' % inspect.stack()[0][3])
-        # paging:  FUTURE WHEN RETRIVE ENTIRE NAMESPACE
-        #paginator = client.get_paginator('describe_instances')
-        #response_iterator = paginator.paginate(PaginationConfig={'PageSize': pageSize})
-        #for page in response_iterator:
-        if profile:
-            session = boto3.Session(profile_name=profile, region_name=region)
-            client = session.client('ec2')
-        else:
-            client = boto3.client('ec2', region_name=region)
 
-        # find attached volumes
-        response = client.describe_volumes(
-                Filters=[
-                    {
-                        'Name': 'attachment.instance-id',
-                        'Values': [instanceId]
-                    },
-                ]
-            )
-        vids = [y['VolumeId'] for y in [x['Attachments'][0] for x in response['Volumes']]]
-        logger.info('%d volume(s) found for instance %s' % (len(vids), instanceId))
+        base = ec2.instances.filter(InstanceIds=[instanceId])
 
-        # attached enis
-        r = client.describe_network_interfaces(
-                Filters=[
-                    {
-                        'Name': 'attachment.instance-id',
-                        'Values': [instanceId]
-                    },
-                ]
-            )
-        enids = [x['NetworkInterfaceId'] for x in r['NetworkInterfaces']]
+        for instance in base:
+            # get volume ids
+            for vol in instance.volumes.all():
+                vids.append(vol.id)
+            # get network interfaces
+            for eni in instance.network_interfaces:
+                eids.append(eni.id)
+
+            logger.info(
+                    '%d volume(s), %d ENIs found for instance %s' %
+                    (len(vids), len(eids), instanceId)
+                )
     except ClientError as e:
         logger.exception(
             '%s: Problem while retrieving list of volumes for region %s' %
-            (inspect.stack()[0][3], REGION))
+            (inspect.stack()[0][3], region))
         return [], []
-    return vids, enids
+    return vids, eids
 
 
 def namespace_volumes_eids(region, profile=None, pageSize=200):
