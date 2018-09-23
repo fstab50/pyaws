@@ -467,7 +467,6 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
         return False
 
     else:
-        print(f'\nPrefix value is: {prefix}\n')
 
         if prefix in critical_status or severity.upper() == 'CRITICAL':
             header = (Colors.YELLOW + '\t[ ' + Colors.RED + prefix +
