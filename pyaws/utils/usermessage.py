@@ -45,16 +45,17 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
 
     # prefix color handling
     critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
+    warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW')
 
     if quiet:
 
         return True
 
-    elif severity.upper() and prefix not in critical_status:
+    elif severity.upper() and prefix not in (critical_status, warning_status):
 
         print(
-            '[%s]: Prefix must be in critical status list: %s' %
-            (inspect.stack()[0][3], str(critical_status))
+            '[%s]: Prefix must be in either:\n\tcritical status list:\t%s\nor\n\twarning_status list:\t%s' %
+            (inspect.stack()[0][3], str(critical_status), str(warning_status))
             )
         return False
 
@@ -66,7 +67,7 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                 header = (Colors.YELLOW + '\t[ ' + Colors.RED + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
-            elif severity.upper() in ('WARN', 'WARNING'):
+            elif severity.upper() in warning_status:
                 header = (Colors.YELLOW + '\t[ ' + Colors.ORANGE + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
@@ -91,5 +92,5 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
         except Exception as e:
             print(f'{inspect.stack()[0][3]}: Problem sending msg to stdout: {e}')
             return False
-            
+
     return True
