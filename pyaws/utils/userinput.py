@@ -5,7 +5,35 @@ Summary:
     User Input Manipulation
 
 """
+import re
 from string import ascii_lowercase
+
+
+def bool_assignment(arg, patterns=None):
+    """
+    Summary:
+        Enforces correct bool argment assignment
+    Arg:
+        :arg (*): arg which must be interpreted as either bool True or False
+    Returns:
+        bool assignment | TYPE:  bool
+    """
+    arg = str(arg)    # only eval type str
+    try:
+        if patterns is None:
+            patterns = (
+                (re.compile(r'^(true|false)$', flags=re.IGNORECASE), lambda x: x.lower() == 'true'),
+                (re.compile(r'^(yes|no)$', flags=re.IGNORECASE), lambda x: x.lower() == 'yes'),
+                (re.compile(r'^(y|n)$', flags=re.IGNORECASE), lambda x: x.lower() == 'y')
+            )
+        if not arg:
+            return ''    # default selected
+        else:
+            for pattern, func in patterns:
+                if pattern.match(arg):
+                    return func(arg)
+    except Exception as e:
+        raise e
 
 
 def userchoice_mapping(choice):
