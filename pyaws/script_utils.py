@@ -20,10 +20,8 @@ import os
 import json
 import platform
 import datetime
-import re
 import logging
 import inspect
-from string import ascii_lowercase
 from pygments import highlight, lexers, formatters
 from pyaws.colors import Colors
 from pyaws import __version__
