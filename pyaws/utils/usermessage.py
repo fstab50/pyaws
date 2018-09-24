@@ -1,13 +1,21 @@
 """
+Python3 Module
+
 Facility for printing messages to stdout
     - Python3 only
     - Developed & Tested under Python3.6
 
 Message Prefixes:
-    - INFO
-    - ERROR
-    - WARN
-    - <any user defined>
+
+     Status                 Color
+  -----------------      ------------------
+    - INFO                  Cyan (DEFAULT)
+    - ERROR                 Red
+    - WARN                  Orange
+    - OK                    Green
+    - <user defined>        Cyan
+
+Severity
 """
 import inspect
 from pyaws.colors import Colors
