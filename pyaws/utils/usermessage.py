@@ -19,9 +19,29 @@ Severity
 """
 import inspect
 from pyaws.colors import Colors
+from pyaws import logger
 
 
-def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=4, severity=''):
+# prefix handling
+critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
+warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW')
+
+
+def log_message(label, msg):
+    """ logs all messages sent to stdout """
+
+    if label in critical_status:
+        logger.critical(msg)
+
+    elif label in warning_status:
+        logger.warning(msg)
+
+    else:
+        logger.info(msg)
+    return True
+
+
+def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=4, severity='', logging=True):
     """
     Summary:
         Prints message to cli stdout while indicating type and severity
@@ -50,10 +70,6 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
     """
     prefix = prefix.upper()
     tabspaces = int(indent)
-
-    # prefix color handling
-    critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
-    warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW')
 
     if quiet:
 
@@ -96,6 +112,9 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                 print(header.expandtabs(tabspaces) + str(message))
             else:
                 print('\n' + header.expandtabs(tabspaces) + str(message) + '\n')
+
+            if logging:
+                log_message(prefix, message)
 
         except Exception as e:
             print(f'{inspect.stack()[0][3]}: Problem sending msg to stdout: {e}')
