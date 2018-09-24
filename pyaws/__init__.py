@@ -13,3 +13,7 @@ __status__ = "Development"
 
 # the following imports require __version__
 from pyaws.colors import Colors
+from pyaws import logd
+
+# shared, global logger object
+logger = logd.getLogger(__version__)
