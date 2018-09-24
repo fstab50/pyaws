@@ -25,6 +25,7 @@ class Colors():
     DARKCYAN = '\033[36m'
     BLUE = '\033[94m'
     DARKBLUE = '\033[38;5;95;38;5;24m'
+    PUREBLUE = '\u001b[38;5;27m'
     GREEN = '\033[92m'
     DARKGREEN = '\u001b[38;5;2m'
     YELLOW = '\033[93m'
