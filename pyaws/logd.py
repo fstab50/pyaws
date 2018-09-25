@@ -3,6 +3,7 @@ Project-level logging module
 
 """
 import os
+import sys
 import inspect
 import logging
 import logging.handlers
@@ -97,16 +98,20 @@ def getLogger(*args, **kwargs):
         if not logger.handlers:
             # branch on output format, default to stream
             if mode_assignment(log_mode) == 'FILE':
+
                 # file handler
-                logging_prep(mode_assignment(log_mode))
+                if logging_prep(mode_assignment(log_mode)):
 
+                    f_handler = logging.FileHandler(local_config['LOGGING']['LOG_PATH'])
+                    f_formatter = logging.Formatter(file_format, asctime_format)
+                    #f_formatter = logging.Formatter('%(asctime)s %(processName)s %(name)s [%(levelname)-5s]: %(message)s', asctime_format)
+                    f_handler.setFormatter(f_formatter)
+                    logger.addHandler(f_handler)
+                    logger.setLevel(logging.DEBUG)
 
-                f_handler = logging.FileHandler(local_config['LOGGING']['LOG_PATH'])
-                f_formatter = logging.Formatter(file_format, asctime_format)
-                #f_formatter = logging.Formatter('%(asctime)s %(processName)s %(name)s [%(levelname)-5s]: %(message)s', asctime_format)
-                f_handler.setFormatter(f_formatter)
-                logger.addHandler(f_handler)
-                logger.setLevel(logging.DEBUG)
+                else:
+                    syslog.warning(f'{inspect.stack()[0][3]}: Log preparation fail - exit')
+                    sys.exit(1)
 
             elif mode_assignment(log_mode) == 'STREAM':
                 # stream handlers
