@@ -74,19 +74,18 @@ setup(
         'Topic :: System :: Systems Administration',
         'Topic :: Utilities',
         'Development Status :: 4 - Beta',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Operating System :: POSIX :: Linux'
     ],
     keywords='Amazon Web Services AWS iam ec2 lambda rds s3 sts',
     packages=find_packages(exclude=['docs', 'scripts', 'assets']),
     install_requires=requires,
-    python_requires='>=3.4, <4',
+    python_requires='>=3.5, <4',
     entry_points={
         'console_scripts': [
-            'pyaws=pyaws.cli:init_cli',
             'pyconfig=pyaws.cli:option_configure'
         ]
     },
