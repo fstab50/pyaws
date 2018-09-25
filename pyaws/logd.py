@@ -2,11 +2,13 @@
 Project-level logging module
 
 """
+import os
 import inspect
 import logging
 import logging.handlers
-
+from pathlib import Path
 from pyaws.statics import local_config
+
 
 syslog = logging.getLogger()
 syslog.setLevel(logging.DEBUG)
@@ -25,6 +27,31 @@ def mode_assignment(arg):
             return arg
     except Exception:
         return None
+
+
+def logging_prep(mode):
+    """
+    Summary:
+        prerequisites for log file generation
+    Return:
+        Success | Failure, TYPE: bool
+    """
+    try:
+        if mode == 'FILE':
+            log_dir = local_config['LOGGING']['LOG_DIR']
+            log_path = local_config['LOGGING']['LOG_PATH']
+
+            if not os.path.exits(log_dir):
+                os.makedirs(log_dir)
+
+            if not os.path.exits(log_path):
+                os.touch(log_path)
+                Path(log_path).touch(mode=0o644, exist_ok=True)
+
+    except OSError as e:
+        syslog.exception(f'{inspect.stack()[0][3]}: Failure while seeding log file path: {e}')
+        return False
+    return True
 
 
 def getLogger(*args, **kwargs):
@@ -71,6 +98,9 @@ def getLogger(*args, **kwargs):
             # branch on output format, default to stream
             if mode_assignment(log_mode) == 'FILE':
                 # file handler
+                logging_prep(mode_assignment(log_mode))
+
+
                 f_handler = logging.FileHandler(local_config['LOGGING']['LOG_PATH'])
                 f_formatter = logging.Formatter(file_format, asctime_format)
                 #f_formatter = logging.Formatter('%(asctime)s %(processName)s %(name)s [%(levelname)-5s]: %(message)s', asctime_format)
