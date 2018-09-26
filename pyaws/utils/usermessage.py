@@ -24,7 +24,8 @@ from pyaws import logger
 
 # prefix handling
 critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
-warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW', 'DBUG', 'DEBUG')
+warning_status = (
+    'WARN', 'WARNING', 'CAUTION', 'SLOW', 'DBUG', 'DEBUG', 'AUTH')
 
 
 def log_message(label, msg):
@@ -74,14 +75,6 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
     if quiet:
 
         return True
-
-    elif severity.upper() and prefix not in (critical_status, warning_status):
-
-        print(
-            '[%s]: Prefix must be in either:\n\tcritical status list:\t%s\nor\n\twarning_status list:\t%s' %
-            (inspect.stack()[0][3], str(critical_status), str(warning_status))
-            )
-        return False
 
     else:
 

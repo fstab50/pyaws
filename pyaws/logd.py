@@ -42,10 +42,10 @@ def logging_prep(mode):
             log_dir = local_config['LOGGING']['LOG_DIR']
             log_path = local_config['LOGGING']['LOG_PATH']
 
-            if not os.path.exits(log_dir):
+            if not os.path.exists(log_dir):
                 os.makedirs(log_dir)
 
-            if not os.path.exits(log_path):
+            if not os.path.exists(log_path):
                 os.touch(log_path)
                 Path(log_path).touch(mode=0o644, exist_ok=True)
 
