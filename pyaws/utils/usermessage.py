@@ -24,7 +24,7 @@ from pyaws import logger
 
 # prefix handling
 critical_status = ('ERROR', 'FAIL', 'WTF', 'STOP', 'HALT', 'EXIT', 'F*CK')
-warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW')
+warning_status = ('WARN', 'WARNING', 'CAUTION', 'SLOW', 'DBUG', 'DEBUG')
 
 
 def log_message(label, msg):
@@ -54,7 +54,7 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
             on either side of printed message
         :indent (int): left justified number of spaces to indent before
             printing message ouput
-        :severity (str): header msg determined color instead of prefix
+        :severity (str): header status msg determines color instead of prefix
 
     .. code-block:: python
 
