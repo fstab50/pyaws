@@ -46,7 +46,6 @@ def logging_prep(mode):
                 os.makedirs(log_dir)
 
             if not os.path.exists(log_path):
-                os.touch(log_path)
                 Path(log_path).touch(mode=0o644, exist_ok=True)
 
     except OSError as e:
