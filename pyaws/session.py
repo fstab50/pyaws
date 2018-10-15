@@ -4,7 +4,7 @@ import subprocess
 import boto3
 from botocore.exceptions import ClientError, ProfileNotFound
 from pyaws.utils import stdout_message
-from pyaws.core import loggers
+from pyaws import logger
 from pyaws._version import __version__
 
 try:
@@ -15,7 +15,6 @@ except Exception:
     splitchar = '\\'    # character for splitting paths (window
 
 
-logger = loggers.getLogger(__version__)
 DEFAULT_REGION = os.environ['AWS_DEFAULT_REGION'] or 'us-east-1'
 
 
