@@ -1,14 +1,9 @@
 awscli
 boto3
 botocore
-colorama
-docutils
-jmespath
 Pygments
 python-dateutil
 pytz
 PyYAML
 requests
-s3transfer
-six
 twine
