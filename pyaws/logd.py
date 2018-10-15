@@ -103,7 +103,6 @@ def getLogger(*args, **kwargs):
 
                     f_handler = logging.FileHandler(local_config['LOGGING']['LOG_PATH'])
                     f_formatter = logging.Formatter(file_format, asctime_format)
-                    #f_formatter = logging.Formatter('%(asctime)s %(processName)s %(name)s [%(levelname)-5s]: %(message)s', asctime_format)
                     f_handler.setFormatter(f_formatter)
                     logger.addHandler(f_handler)
                     logger.setLevel(logging.DEBUG)
