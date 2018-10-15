@@ -36,6 +36,14 @@ def bool_assignment(arg, patterns=None):
         raise e
 
 
+def range_bind(min_value, max_value, value):
+    """ binds number to a type and range """
+    if value not in range(min_value, max_value + 1):
+        value = min(value, max_value)
+        value = max(min_value, value)
+    return int(value)
+
+
 def userchoice_mapping(choice):
     """
     Summary:
