@@ -9,16 +9,15 @@ Author:
     Copyright Blake Huber, All Rights Reserved.
 
 License:
-    Permission to use, copy, modify, and distribute this software and its
-    documentation for any purpose and without fee is hereby granted,
-    provided that the above copyright notice appear in all copies and that
-    both the copyright notice and this permission notice appear in
-    supporting documentation
 
+    MIT License.
     Additional terms may be found in the complete license agreement:
-    https://bitbucket.org/blakeca00/lambda-library-python/src/master/LICENSE.md
+    https://opensource.org/licenses/MIT
 
+    Project README:
+    https://github.com/fstab50/pyaws/blob/master/README.md
 """
+
 
 import os
 import re
@@ -32,61 +31,6 @@ from _version import __version__
 
 # lambda custom log object
 logger = loggers.getLogger(__version__)
-
-
-def read_env_variable(arg, default=None, patterns=None):
-    """
-    Summary:
-        Parse environment variables, validate characters, convert
-        type(s). default should be used to avoid conversion of an
-        variable and retain string type
-
-    Example usage:
-
-    >>> from lambda_utils import read_env_variable
-    >>> os.environ['DBUGMODE'] = 'True'
-    >>> myvar = read_env_variable('DBUGMODE')
-    >>> type(myvar)
-    True
-
-    >>> from lambda_utils import read_env_variable
-    >>> os.environ['MYVAR'] = '1345'
-    >>> myvar = read_env_variable('MYVAR', 'default')
-    >>> type(myvar)
-    str
-    """
-    if patterns is None:
-        patterns = (
-            (re.compile('^[-+]?[0-9]+$'), int),
-            (re.compile('\d+\.\d+'), float),
-            (re.compile(r'^(true|false)$', flags=re.IGNORECASE), lambda x: x.lower() == 'true'),
-            (re.compile('[a-z/]+', flags=re.IGNORECASE), str),
-            (re.compile('[a-z/]+\.[a-z/]+', flags=re.IGNORECASE), str),
-        )
-
-    if arg in os.environ:
-        var = os.environ[arg]
-        if var is None:
-            ex = KeyError('environment variable %s not set' % arg)
-            logger.exception(ex)
-            raise ex
-        else:
-            if default:
-                return str(var)     # force default type (str)
-            else:
-                for pattern, func in patterns:
-                    if pattern.match(var):
-                        return func(var)
-            # type not identified
-            logger.warning(
-                '%s: failed to identify environment variable [%s] type. May contain \
-                special characters' % (inspect.stack()[0][3], arg)
-                 )
-            return str(var)
-    else:
-        ex = KeyError('environment variable %s not set' % arg)
-        logger.exception(ex)
-        raise ex
 
 
 def get_account_info(account_profile=None):
@@ -197,72 +141,3 @@ def sns_notification(topic_arn, subject, message, account_id=None, account_name=
             (inspect.stack()[0][3], e.response['Error']['Code'],
                 e.response['Error']['Message']))
         return False
-
-
-def import_file_object(filename):
-    """
-
-    Summary: imports block fs object
-
-    Args: block filesystem object
-
-    Returns:
-        dictionary obj (valid json file), file data object
-
-    """
-    try:
-        with open(filename, 'r') as handle:
-            file_obj = handle.read()
-            dict_obj = json.loads(file_obj)
-
-    except IOError as e:
-        logger.critical(
-            'import_file_object: %s error opening %s' % (str(e), str(filename))
-        )
-        raise e
-    except ValueError:
-        logger.info(
-            '%s: import_file_object: %s not json. file object returned' %
-            (inspect.stack()[0][3], str(filename))
-        )
-        return file_obj    # reg file, not valid json
-    return dict_obj
-
-
-def export_json_object(dict_obj, filename=None):
-    """
-
-    Summary: exports object to block fs object
-
-    Args:
-        dict_obj - dictionary object
-        filename - name of file to be exported
-
-    Returns:
-        True | False Boolean export status
-
-    """
-    try:
-        if filename:
-            with open(filename, 'w') as handle:
-                handle.write(json.dumps(dict_obj, indent=4, sort_keys=True))
-        else:
-            print(json.dumps(dict_obj, indent=4, sort_keys=True))
-
-    except IOError as e:
-        logger.critical(
-            '%s: export_file_object: error writing to %s to filesystem. Error: %s' %
-            (inspect.stack()[0][3], filename, str(e)))
-        return False
-    else:
-        logger.info(
-            'export_file_object: successful export to %s' % filename)
-        return True
-
-
-def range_bind(min_value, max_value, value):
-    """ binds number to a type and range """
-    if value not in range(min_value, max_value + 1):
-        value = min(value, max_value)
-        value = max(min_value, value)
-    return int(value)
