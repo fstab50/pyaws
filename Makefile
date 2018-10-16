@@ -1,5 +1,5 @@
 #
-#	Makefile, v1.6.2,  PROJECT:  pyaws
+#	Makefile, v1.7.0,  PROJECT:  pyaws
 #
 # --- declarations  --------------------------------------------------------------------------------
 
@@ -44,8 +44,8 @@ pre-build:    ## Remove residual build artifacts
 
 
 .PHONY: setup-venv
-setup-venv:    ## Create and activiate python venv
-	$(PYTHON3_PATH) -m venv $(VENV_DIR)
+setup-venv:  pre-build  ## Create and activiate python venv
+	$(PYTHON3_PATH) -m venv $(VENV_DIR); \
 	. $(VENV_DIR)/bin/activate && $(PIP_CALL) install -U setuptools pip && \
 	$(PIP_CALL) install -r $(REQUIREMENT)
 
@@ -95,15 +95,13 @@ install:    ## Install (source: pypi). Build artifacts exist
 
 
 .PHONY: test-install
-test-install:  ## Install (source: testpypi). Build artifacts exist
-	if [ ! -e $(VENV_DIR) ]; then $(MAKE) setup-venv; fi; \
+test-install:  setup-venv ## Install (source: testpypi). Build artifacts exist
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PIP_CALL) install -U $(PROJECT) --extra-index-url https://test.pypi.org/simple/
 
 
 .PHONY: source-install
 source-install:  setup-venv  ## Install (source: local source). Build artifacts exist
-	if [ ! -e $(VENV_DIR) ]; then $(MAKE) clean; fi; \
 	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
 	$(PIP_CALL) install .
 
@@ -111,7 +109,8 @@ source-install:  setup-venv  ## Install (source: local source). Build artifacts 
 .PHONY: update-source-install
 update-source-install:    ## Update Install (source: local source).
 	if [ -e $(VENV_DIR) ]; then \
-	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3.6/site-packages/; fi
+	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3.6/site-packages/; \
+ 	else @echo "No virtualenv built - nothing to update"; fi
 
 
 .PHONY: help
