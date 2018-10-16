@@ -26,16 +26,13 @@ import time
 import inspect
 import boto3
 from botocore.exceptions import ClientError
-import loggers
-from _version import __version__
-
-# lambda custom log object
-logger = loggers.getLogger(__version__)
+from pyaws import logger
 
 
 def get_account_info(account_profile=None):
     """
-    Summary:
+    Summary.
+
         Queries AWS iam and sts services to discover account id information
         in the form of account name and account alias (if assigned)
 
@@ -76,11 +73,13 @@ def get_account_info(account_profile=None):
 
 def get_regions():
     """
-    Summary
+    Summary.
+
         Returns list of region codes for all AWS regions worldwide
 
     Returns:
         TYPE: list
+
     """
     try:
         client = boto3.client('ec2')
@@ -98,7 +97,8 @@ def get_regions():
 
 def sns_notification(topic_arn, subject, message, account_id=None, account_name=None):
     """
-    Summary:
+    Summary.
+
         Sends message to AWS sns service topic provided as a
         parameter
 
@@ -109,6 +109,7 @@ def sns_notification(topic_arn, subject, message, account_id=None, account_name=
 
     Returns:
         TYPE: Boolean | Success or Failure
+
     """
     if not (account_id or account_name):
         account_id, account_name = get_account_info()
