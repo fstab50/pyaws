@@ -21,29 +21,40 @@ License:
 import os
 import re
 import inspect
-from pyaws import logger, __version__
+from pyaws import logger
 
 
 def read_env_variable(arg, default=None, patterns=None):
     """
-    Summary:
+    Summary.
+
         Parse environment variables, validate characters, convert
         type(s). default should be used to avoid conversion of an
         variable and retain string type
 
-    Example usage:
+    Usage:
+        >>> from lambda_utils import read_env_variable
+        >>> os.environ['DBUGMODE'] = 'True'
+        >>> myvar = read_env_variable('DBUGMODE')
+        >>> type(myvar)
+        True
 
-    >>> from lambda_utils import read_env_variable
-    >>> os.environ['DBUGMODE'] = 'True'
-    >>> myvar = read_env_variable('DBUGMODE')
-    >>> type(myvar)
-    True
+        >>> from lambda_utils import read_env_variable
+        >>> os.environ['MYVAR'] = '1345'
+        >>> myvar = read_env_variable('MYVAR', 'default')
+        >>> type(myvar)
+        str
 
-    >>> from lambda_utils import read_env_variable
-    >>> os.environ['MYVAR'] = '1345'
-    >>> myvar = read_env_variable('MYVAR', 'default')
-    >>> type(myvar)
-    str
+    Args:
+        :arg (str):  Environment variable name (external name)
+        :default (str): Default if no variable found in the environment under
+            name in arg parameter
+        :patterns (None):  Unused; not user callable. Used preservation of the
+            patterns tuple between calls during runtime
+
+    Returns:
+        environment variable value, TYPE str
+
     """
     if patterns is None:
         patterns = (
