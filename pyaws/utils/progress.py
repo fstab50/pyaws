@@ -56,8 +56,7 @@ def progress_meter(delay=0.1, pattern='.', width=None):
 
     """
     if width is None:
-        stop = (screen_dimensions() / 3)
-        print(f'stop is: {stop}')
+        stop = int(screen_dimensions() / 3)
     else:
         stop = int(width)
 
