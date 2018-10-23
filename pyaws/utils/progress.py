@@ -76,6 +76,6 @@ def progress_meter(delay=0.1, pattern='.', width=None):
             time.sleep(delay)
 
 
+
 print('Width is: %d' % screen_dimensions())
 print('Ht is: %d' % screen_dimensions(width=False, height=True))
-progress_meter(width=80)
