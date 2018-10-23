@@ -11,21 +11,25 @@ except Exception:
     native = True           # use Linux native
 
 
-def get_screen_width(width=True, height=False):
+def screen_dimensions(width=True, height=False):
     """
-    Summary:
+    Summary.
+
         Uses TKinter module in the standard library to find screen dimensions
+
     Args:
         :width (bool):  If True, return screen width in columns (DEFAULT)
         :height (bool): If True, return screen height in rows
+
     Returns:
         Screen width, height, TYPE: int
+
     """
     if native:
         cols = subprocess.getoutput('tput cols')
         rows = subprocess.getoutput('tput lines')
     else:
-        root = Tkinter.Tk()
+        root = tkinter.Tk()
         cols = root.winfo_screenwidth()
         rows = root.winfo_screenheight()
 
@@ -36,27 +40,31 @@ def get_screen_width(width=True, height=False):
     return int(cols)
 
 
-def progress_meter(width=None, delay=0.1, icon='.'):
+def progress_meter(delay=0.1, pattern='.', width=None):
     """
-    Summary:
+    Summary.
+
         Graphical progress meter
+
     Args:
-        :icon (str): Character to print in pattern
+        :pattern (str): Character to print in pattern
         :width (int): Width of pattern to print (columns)
         :delay (int): Delay between prints (seconds)
+
     Returns:
         stdout pattern
+
     """
     if width is None:
-        stop = (get_screen_width() / 3)
+        stop = (screen_dimensions() / 3)
         print(f'stop is: {stop}')
     else:
         stop = width
 
-    for i in range(0,stop + 1):
+    for i in range(0, stop + 1):
 
         if i == 0:
-            sys.stdout.write('\t%s' % icon)
+            sys.stdout.write('\t%s' % pattern)
             time.sleep(delay)
 
         elif i > stop:
@@ -64,9 +72,10 @@ def progress_meter(width=None, delay=0.1, icon='.'):
             i = 0
 
         else:
-            sys.stdout.write('%s' % icon)
+            sys.stdout.write('%s' % pattern)
             time.sleep(delay)
 
-print('Width is: %d' % get_screen_width())
-print('Ht is: %d' % get_screen_width(width=False, height=True))
+
+print('Width is: %d' % screen_dimensions())
+print('Ht is: %d' % screen_dimensions(width=False, height=True))
 progress_meter(width=80)
