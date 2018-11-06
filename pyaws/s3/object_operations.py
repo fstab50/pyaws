@@ -11,26 +11,27 @@ from pyaws.session import boto3_session
 from pyaws import logger
 
 
-class ObjectS3Operations():
+class S3FileOperations():
     """
     Summary.
 
         put, delete, put-acl object operations in Amazon S3
     """
+
     def __init__(self, bucket, profile=None):
         self.client = boto3_session(service='s3', profile_name=profile)
         self.bucket = bucket
 
-    def put_object(self, key, body, bucket=self.bucket):
+    def put_fileobject(self, key, file, bucket=self.bucket):
         r = self.client.put_object(
-                Bucket=bucket, Key=key, Body=body
+                Bucket=bucket, Key=key, Body=file
             )
         return r
 
     def put_object_acl(self, key, acl, bucket=self.bucket):
-        r = client.put_object_acl(
+        r = self.client.put_object_acl(
                 Bucket=bucket,
-                Key=,
-                ACL='public-read'
+                Key=key,
+                ACL=acl
             )
         return r
