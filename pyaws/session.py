@@ -148,3 +148,27 @@ def authenticated(profile):
     except Exception as e:
         return False
     return False
+
+
+def client_wrapper(service, profile, region=DEFAULT_REGION):
+    """
+    Summary.
+
+        call-once boto3 service wrapper, instantiates client object while
+        using temporary credientials for profile_name, if available in
+        local configuration. Tests authentication
+    """
+    profile_name = _profile_prefix(profile)
+
+    try:
+
+        if authenticated(profile_name):
+            return boto3_session(service=service, profile=profile_name, region=region)
+
+    except ClientError as e:
+        logger.exception(
+            "%s: Unknown boto3 failure while establishing session (Code: %s Message: %s)" %
+            (inspect.stack()[0][3], e.response['Error']['Code'],
+             e.response['Error']['Message'])
+        )
+    return None
