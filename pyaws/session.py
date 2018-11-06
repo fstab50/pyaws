@@ -93,8 +93,11 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
     Args:
         :service (str): boto3 service abbreviation ('ec2', 's3', etc)
         :profile (str): profile_name of an iam user from local awscli config
+        :region (str):  AWS region code, optional
+
     Returns:
-        TYPE: boto3 client object
+        client (boto3 object)
+
     """
     try:
 
@@ -157,6 +160,15 @@ def client_wrapper(service, profile, region=DEFAULT_REGION):
         call-once boto3 service wrapper, instantiates client object while
         using temporary credientials for profile_name, if available in
         local configuration. Tests authentication
+
+    Args:
+        :service (str): boto3 service abbreviation ('ec2', 's3', etc)
+        :profile (str): profile_name of an iam user from local awscli config
+        :region (str):  AWS region code, optional
+
+    Returns:
+        client (boto3 object)
+
     """
     profile_name = _profile_prefix(profile)
 
