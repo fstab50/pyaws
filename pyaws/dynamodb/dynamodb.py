@@ -70,7 +70,7 @@ class DynamoDBReader():
                 "Couldn't assume role to read DynamoDB, account " +
                 str(aws_account_id) + " (switching role) (Code: %s Message: %s)" %
                 (e.response['Error']['Code'], e.response['Error']['Message']))
-            return {}
+            raise e
         return assumed_role['Credentials']
 
     def query_dynamodb(self, partition_key, key_value):
