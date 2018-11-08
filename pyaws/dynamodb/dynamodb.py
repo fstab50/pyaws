@@ -7,21 +7,22 @@ Summary:
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key, Attr
+from pyaws import logger
 
 
 class DynamoDBReader():
-    def __init__(self, aws_account_id, service_role, dynamodb_table, dynamodb_aws_region):
+    def __init__(self, aws_account_id, service_role, tablename, region):
         """
         Reads DynamoDB table
         """
-        self.dynamodb_table = dynamodb_table
-        self.dynamodb_aws_region = dynamodb_aws_region
+        self.tablename = tablename
+        self.region = region
         self.aws_account_id = aws_account_id
         self.service_role = service_role
         self.aws_credentials = self.assume_role(aws_account_id, service_role)
 
 
-    def boto_dynamodb_resource(self, dynamodb_aws_region):
+    def boto_dynamodb_resource(self, region):
         """
         Initiates boto resource to communicate with AWS API
         """
@@ -31,7 +32,7 @@ class DynamoDBReader():
                 aws_access_key_id=self.aws_credentials['AccessKeyId'],
                 aws_secret_access_key=self.aws_credentials['SecretAccessKey'],
                 aws_session_token=self.aws_credentials['SessionToken'],
-                region_name=dynamodb_aws_region
+                region_name=region
             )
         except ClientError as e:
             logger.exception("Unknown problem creating boto3 resource (Code: %s Message: %s)" %
@@ -78,8 +79,8 @@ class DynamoDBReader():
         returns the item matching key value
         """
         try:
-            resource_dynamodb = self.boto_dynamodb_resource(self.dynamodb_aws_region)
-            table = resource_dynamodb.Table(self.dynamodb_table)
+            resource_dynamodb = self.boto_dynamodb_resource(self.region)
+            table = resource_dynamodb.Table(self.tablename)
             logger.info('Table %s: Table Item Count is: %s' % (table.table_name, table.item_count))
 
             # query on parition key
@@ -106,8 +107,8 @@ class DynamoDBReader():
         types = [x.strip(' ') for x in account_type.split(',')]    # parse types
 
         try:
-            resource_dynamodb = self.boto_dynamodb_resource(self.dynamodb_aws_region)
-            table = resource_dynamodb.Table(self.dynamodb_table)
+            resource_dynamodb = self.boto_dynamodb_resource(self.region)
+            table = resource_dynamodb.Table(self.tablename)
             # scan table
             if set(types).issubset(set(valid_mpc_pkgs)):
                 for type in types:
