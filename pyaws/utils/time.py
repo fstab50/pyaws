@@ -37,26 +37,37 @@ def convert_strtime_datetime(dt_str):
     return dt + datetime.timedelta(microseconds=us)
 
 
-def convert_timedelta(duration):
-    """
-    Summary:
-        Convert duration into component time units
-    Args:
-        :duration (datetime.timedelta): time duration to convert
-    Returns:
-        days, hours, minutes, seconds | TYPE: tuple (integers)
-    """
-    try:
-        days, seconds = duration.days, duration.seconds
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        seconds = (seconds % 60)
-    except Exception:
-        logger.exception(
-                f'{inspect.stack()[0][3]}: Input must be datetime.timedelta object'
-            )
-        return 0, 0, 0, 0
-    return days, hours, minutes, seconds
+class TimeDelta():
+    def __init__(self, duration):
+        """
+        Summary.
+
+            Time difference Class
+        Args:
+            :duration (datetime timedelta object)
+        """
+        self.days, self.hours, self.minutes, self.seconds = self.convert_timedelta(duration)
+
+    def convert_timedelta(self, duration):
+        """
+        Summary:
+            Convert duration into component time units
+        Args:
+            :duration (datetime.timedelta): time duration to convert
+        Returns:
+            days, hours, minutes, seconds | TYPE: tuple (integers)
+        """
+        try:
+            days, seconds = duration.days, duration.seconds
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+            seconds = (seconds % 60)
+        except Exception:
+            logger.exception(
+                    f'{inspect.stack()[0][3]}: Input must be datetime.timedelta object'
+                )
+            return 0, 0, 0, 0
+        return days, hours, minutes, seconds
 
 
 def convert_dt_time(duration, return_iter=False):
