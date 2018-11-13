@@ -288,3 +288,16 @@ def os_parityPath(path):
     if path.startswith('\\'):
         return 'C:' + path
     return path
+
+
+def directory_contents(directory):
+    """Returns full paths of all file objects contained in a directory"""
+    filepaths = []
+    try:
+        for dirpath,_,filenames in os.walk(directory):
+            for f in filenames:
+                filepaths.append(os.path.abspath(os.path.join(dirpath, f)))
+    except OSError as e:
+        logger.exception(
+            '{}: Problem walking directory contents: {}'.format(inspect.stack()[0][3], e))
+    return filepaths
