@@ -66,23 +66,29 @@ def userchoice_mapping(choice):
     # prepare mapping dict containing all 26 letters
     map_dict = {}
     letters = ascii_lowercase
+
     for index in range(1, 27):
         map_dict[index] = letters[index - 1]
-    # process user input
+
     try:
+
+        # process user input
         if isinstance(choice, str):
-            if choice in letters:
+            if choice.lower() in letters:
                 for k, v in map_dict.items():
                     if v == choice.lower():
                         return k
+
             elif int(choice) in range(1, 27):
                 # integer string provided
                 return map_dict[int(choice)]
+
             else:
                 # not in letters or integer string outside range
                 return None
         elif choice not in range(1, 27):
             return None
+
     except KeyError:
         # integer outside range provided
         return None
