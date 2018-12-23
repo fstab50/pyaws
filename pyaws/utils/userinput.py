@@ -44,6 +44,27 @@ def range_bind(min_value, max_value, value):
     return int(value)
 
 
+def range_test(min, max, value):
+    """
+    Summary.
+
+        Tests value to determine if in range (min, max)
+
+    Args:
+        :min (int):  integer representing minimum acceptable value
+        :max (int):  integer representing maximum acceptable value
+        :value (int): value tested
+
+    Returns:
+        Success | Failure, TYPE: bool
+
+    """
+    if isinstance(value, int):
+        if value in range(min, max + 1):
+            return True
+    return False
+
+
 def userchoice_mapping(choice):
     """
     Summary:
