@@ -115,7 +115,7 @@ def userchoice_mapping(choice):
             else:
                 # not in letters or integer string outside range
                 return None
-        elif choice not in range(1, max_index + 1):
+        elif choice not in range(0, max_index + 1):
             return None
 
     except KeyError:
