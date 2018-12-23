@@ -86,10 +86,18 @@ def userchoice_mapping(choice):
     """
     # prepare mapping dict containing all 26 letters
     map_dict = {}
-    letters = ascii_lowercase
+    letters = [x for x in ascii_lowercase]
+    extend_a = ['a' + x for x in letters]
+    extend_b = ['b' + x for x in letters]
 
-    for index in range(1, 27):
-        map_dict[index] = letters[index - 1]
+    # combine all
+    letters.extend(extend_a)
+    letters.extend(extend_b)
+    max_index = len(letters)
+
+    # build lookup table (dict)
+    for index, key in enumerate(letters):
+        map_dict[index] = letters[index]
 
     try:
 
@@ -100,14 +108,14 @@ def userchoice_mapping(choice):
                     if v == choice.lower():
                         return k
 
-            elif int(choice) in range(1, 27):
+            elif int(choice) in range(1, max_index + 1):
                 # integer string provided
                 return map_dict[int(choice)]
 
             else:
                 # not in letters or integer string outside range
                 return None
-        elif choice not in range(1, 27):
+        elif choice not in range(1, max_index + 1):
             return None
 
     except KeyError:
