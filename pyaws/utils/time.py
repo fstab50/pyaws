@@ -23,13 +23,17 @@ logger.setLevel(logging.INFO)
 
 
 def convert_strtime_datetime(dt_str):
-    """ Converts datetime isoformat string to datetime (dt) object
+    """
+    Summary.
+        Converts datetime isoformat string to datetime (dt) object
 
     Args:
         :dt_str (str): input string in '2017-12-30T18:48:00.353Z' form
          or similar
+
     Returns:
         TYPE:  datetime object
+
     """
     dt, _, us = dt_str.partition(".")
     dt = datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
@@ -43,19 +47,28 @@ class TimeDelta():
         Summary.
 
             Time difference Class
+
         Args:
             :duration (datetime timedelta object)
+
+        Returns:
+            days, hours, minutes, seconds, TYPE: tuple of int
+
         """
         self.days, self.hours, self.minutes, self.seconds = self.convert_timedelta(duration)
 
     def convert_timedelta(self, duration):
         """
-        Summary:
+        Summary.
+
             Convert duration into component time units
+
         Args:
             :duration (datetime.timedelta): time duration to convert
+
         Returns:
             days, hours, minutes, seconds | TYPE: tuple (integers)
+
         """
         try:
             days, seconds = duration.days, duration.seconds
