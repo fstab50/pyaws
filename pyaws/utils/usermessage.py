@@ -84,7 +84,7 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                 header = (Colors.YELLOW + '\t[ ' + Colors.RED + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
-            elif severity.upper() in warning_status:
+            elif ( prefix or severity.upper() ) in warning_status:
                 header = (Colors.YELLOW + '\t[ ' + Colors.ORANGE + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
