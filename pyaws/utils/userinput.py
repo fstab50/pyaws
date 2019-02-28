@@ -36,6 +36,22 @@ def bool_assignment(arg, patterns=None):
         raise e
 
 
+def convert_bool(variable):
+    """
+    Convert input from user from string to bool
+    """
+    try:
+        if re.search('True', variable, re.IGNORECASE):
+            return True
+        elif re.search('False', variable, re.IGNORECASE):
+            return False
+        else:
+            return bool(int(variable))
+    except ValueError as e:
+        logger.error("Error: " + str(variable) + " cannot be interpreted. Setting it to false. Error:" + str(e))
+        return False
+
+
 def range_bind(min_value, max_value, value):
     """ binds number to a type and range """
     if value not in range(min_value, max_value + 1):
