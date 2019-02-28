@@ -37,9 +37,9 @@ def bool_assignment(arg, patterns=None):
         raise e
 
 
-def convert_bool(variable):
+def bool_convert(variable):
     """
-    Convert input from user from string to bool
+    Convert user input from string, int to bool
     """
     try:
         if re.search('True', variable, re.IGNORECASE):
@@ -47,7 +47,7 @@ def convert_bool(variable):
         elif re.search('False', variable, re.IGNORECASE):
             return False
     except TypeError as e:
-        logger.error("Error: " + str(variable) + " cannot be interpreted. Setting it to false. Error:" + str(e))
+        logger.error("Error: {} not interpreted. Return false. Error: {}".format(str(variable), str(e)))
         return False
     return bool(int(variable))
 
