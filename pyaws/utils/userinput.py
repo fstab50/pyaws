@@ -7,6 +7,7 @@ Summary:
 """
 import re
 from string import ascii_lowercase
+from pyaws import logger
 
 
 def bool_assignment(arg, patterns=None):
@@ -45,11 +46,10 @@ def convert_bool(variable):
             return True
         elif re.search('False', variable, re.IGNORECASE):
             return False
-        else:
-            return bool(int(variable))
-    except ValueError as e:
+    except TypeError as e:
         logger.error("Error: " + str(variable) + " cannot be interpreted. Setting it to false. Error:" + str(e))
         return False
+    return bool(int(variable))
 
 
 def range_bind(min_value, max_value, value):
