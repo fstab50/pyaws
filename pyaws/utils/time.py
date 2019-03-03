@@ -83,7 +83,7 @@ class TimeDelta():
         return days, hours, minutes, seconds
 
 
-def convert_timedelta(self, duration):
+def convert_timedelta(duration):
     """
     Summary:
         Convert duration into component time units
