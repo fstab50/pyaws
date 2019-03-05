@@ -53,7 +53,8 @@ class Colors():
     BRIGHTWHITE = '\033[38;5;15m'
 
     # background colors
-    BKGND_BLACK = '\u001b[40m'
+    BKGND_BLACK = '\u001b[0m'
+    BKGND_GREY = '\u001b[40m'
     BKGND_BLUE = '\u001b[44m'
     BKGND_CYAN = '\u001b[46m'
     BKGND_GREEN = '\u001b[42m'
