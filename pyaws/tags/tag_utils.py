@@ -7,17 +7,14 @@ from pygments import highlight, lexers, formatters
 from functools import reduce
 import boto3
 from botocore.exceptions import ClientError
-from pyaws.core.session import authenticated, boto3_session
-from pyaws.core import loggers
+from pyaws.session import authenticated, boto3_session
+from pyaws import logger
 from pyaws import __version__
 
 try:
     from pyaws.core.oscodes_unix import exit_codes
 except Exception:
     from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
-
-
-logger = loggers.getLogger(__version__)
 
 
 def create_taglist(dict):
