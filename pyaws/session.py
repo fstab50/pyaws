@@ -101,7 +101,13 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
     """
     try:
 
-        if profile and profile != 'default':
+        if (not profile or profile == 'default') and service != 'iam':
+            return boto3.client(service, region_name=region)
+
+        elif (not profile or profile == 'default') and service == 'iam':
+            return boto3.client(service)
+
+        elif profile and profile != 'default':
             session = boto3.Session(profile_name=profile)
             return session.client(service, region_name=region)
 
