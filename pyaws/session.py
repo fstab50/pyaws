@@ -159,7 +159,7 @@ def authenticated(profile):
     return False
 
 
-def client_wrapper(service, profile, region=DEFAULT_REGION):
+def client_wrapper(service, profile='default', region=DEFAULT_REGION):
     """
     Summary.
 
