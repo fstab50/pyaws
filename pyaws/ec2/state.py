@@ -18,11 +18,10 @@ License:
 
 """
 import os
-import subprocess
 import inspect
 import boto3
-from botocore.exceptions import ClientError
-from pyaws.session import boto3_session
+from botocore.exceptions import ClientError, ProfileNotFound
+from pyaws.utils import stdout_message
 from pyaws import logger
 
 
@@ -43,20 +42,27 @@ def running_instances(region, profile=None, debug=False):
         :list of running ec2 instance ids, TYPE: list
 
     """
-    if profile and profile != 'default':
-        session = boto3.Session(profile_name=profile)
-        ec2 = session.resource('ec2', region_name=region)
-    else:
-        ec2 = boto3.resource('ec2', region_name=region)
-
-    instances = ec2.instances.all()
-
     try:
+        if profile and profile != 'default':
+            session = boto3.Session(profile_name=profile)
+            ec2 = session.resource('ec2', region_name=region)
+        else:
+            ec2 = boto3.resource('ec2', region_name=region)
+        instances = ec2.instances.all()
 
-        return [x for x in instances if x.state['Name'] == 'running']
-
-    except Exception as e:
-        logger.exception('Unknown error: {}'.format(e))
+    except ClientError as e:
+        logger.exception(
+            "%s: IAM user or role not found (Code: %s Message: %s)" %
+            (inspect.stack()[0][3], e.response['Error']['Code'],
+             e.response['Error']['Message']))
+        raise
+    except ProfileNotFound:
+        msg = (
+            '%s: The profile (%s) was not found in your local config' %
+            (inspect.stack()[0][3], profile))
+        stdout_message(msg, 'FAIL')
+        logger.warning(msg)
+    return [x for x in instances if x.state['Name'] == 'running']
 
 
 def stopped_instances(region, profile=None, debug=False):
@@ -69,17 +75,24 @@ def stopped_instances(region, profile=None, debug=False):
         :list of stopped ec2 instance ids, TYPE: list
 
     """
-    if profile and profile != 'default':
-        session = boto3.Session(profile_name=profile)
-        ec2 = session.resource('ec2', region_name=region)
-    else:
-        ec2 = boto3.resource('ec2', region_name=region)
-
-    instances = ec2.instances.all()
-
     try:
+        if profile and profile != 'default':
+            session = boto3.Session(profile_name=profile)
+            ec2 = session.resource('ec2', region_name=region)
+        else:
+            ec2 = boto3.resource('ec2', region_name=region)
+        instances = ec2.instances.all()
 
-        return [x for x in instances if x.state['Name'] == 'stopped']
-
-    except Exception as e:
-        logger.exception('Unknown error: {}'.format(e))
+    except ClientError as e:
+        logger.exception(
+            "%s: IAM user or role not found (Code: %s Message: %s)" %
+            (inspect.stack()[0][3], e.response['Error']['Code'],
+             e.response['Error']['Message']))
+        raise
+    except ProfileNotFound:
+        msg = (
+            '%s: The profile (%s) was not found in your local config' %
+            (inspect.stack()[0][3], profile))
+        stdout_message(msg, 'FAIL')
+        logger.warning(msg)
+    return [x for x in instances if x.state['Name'] == 'stopped']
