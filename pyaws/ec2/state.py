@@ -39,7 +39,7 @@ def running_instances(region, profile=None, debug=False):
         Determines state of all ec2 machines in a region
 
     Returns:
-        :list of running ec2 instance ids, TYPE: list
+        :running ec2 instances, TYPE: ec2 objects
 
     """
     try:
@@ -72,7 +72,7 @@ def stopped_instances(region, profile=None, debug=False):
         Determines state of all ec2 machines in a region
 
     Returns:
-        :list of stopped ec2 instance ids, TYPE: list
+        :stopped ec2 instance ids, TYPE: ec2 objects
 
     """
     try:
