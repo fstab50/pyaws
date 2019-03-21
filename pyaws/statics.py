@@ -16,8 +16,7 @@ Module Attributes:
 import inspect
 import logging
 from pyaws.script_utils import get_os
-#from pyaws._version import __version__
-__version__ = '1.0'
+from pyaws._version import __version__
 
 logger = logging.getLogger(__version__)
 logger.setLevel(logging.INFO)
