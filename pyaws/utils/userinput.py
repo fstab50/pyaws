@@ -7,7 +7,11 @@ Summary:
 """
 import re
 from string import ascii_lowercase
-from pyaws import logger
+from pyaws import logd
+from pyaws._version import __version__
+
+
+logger = logd.getLogger(__version__)
 
 
 def bool_assignment(arg, patterns=None):

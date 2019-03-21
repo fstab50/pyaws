@@ -1,3 +1,4 @@
+import os
 from pyaws._version import __version__ as version
 from pyaws import environment
 
@@ -14,13 +15,13 @@ __status__ = "Development"
 ## the following imports require __version__  ##
 
 from pyaws.colors import Colors
-from pyaws import logd
+from pyaws import logd 
 
 PACKAGE = 'pyaws'
 enable_logging = True
 log_mode = 'STREAM'          # log to cloudwatch logs
-log_filename = ''
-log_dir = '/tmp'
+log_filename = 'pyaws.log'
+log_dir = os.getenv('HOME') + '/logs'
 log_path = log_dir + '/' + log_filename
 
 

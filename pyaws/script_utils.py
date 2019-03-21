@@ -19,7 +19,6 @@ import sys
 import os
 import json
 import platform
-import datetime
 import logging
 import inspect
 
