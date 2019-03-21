@@ -44,18 +44,15 @@ def awscli_region(profile_name):
     return region
 
 
-def set_default_region():
+def set_default_region(profile=None):
     """
     Sets AWS default region globally
     """
     if os.getenv('AWS_DEFAULT_REGION'):
         return os.getenv('AWS_DEFAULT_REGION')
-    else:
-        # determine default region from awscli
-        default_region = awscli_region(profile_name='default')
-        if not default_region:
-            default_region = 'us-east-2'
-    return default_region
+    elif profile is not None:
+        return awscli_region(profile_name=profile)
+    return awscli_region(profile_name='default')
 
 
 def set_environment():
