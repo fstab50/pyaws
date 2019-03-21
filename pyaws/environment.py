@@ -7,6 +7,8 @@ import os
 import subprocess
 import inspect
 import logging
+from shutil import which
+from pyaws.utils import stdout_message
 
 
 logger = logging.getLogger()
@@ -16,28 +18,29 @@ logger.setLevel(logging.INFO)
 def awscli_region(profile_name):
     """
     Summary:
-        Extracts the STS AccessKeyId currently utilised in user's
-        profile in the local awscli configuration
+        Sets default AWS region
     Args:
         profile_name:  a username in local awscli profile
     Returns:
-        key_id (str): Amazon STS AccessKeyId
+        region (str): AWS region code | None
     Raises:
         Exception if profile_name not found in config
     """
-
     awscli = 'aws'
-    cmd = 'type ' + awscli + ' 2>/dev/null'
 
-    if subprocess.getoutput(cmd):
-        cmd = awscli + ' configure get ' + profile_name + '.region' + ' 2>/dev/null'
+    if not which(awscli):
+        stdout_message(message='Unable to locate awscli')
+        return None
+    else:
+        cmd = awscli + ' configure get ' + profile_name + '.region'
+
     try:
         region = subprocess.getoutput(cmd)
-    except Exception as e:
+    except Exception:
         logger.exception(
             '%s: Failed to identify AccessKeyId used in %s profile.' %
             (inspect.stack()[0][3], profile_name))
-        return ''
+        return None
     return region
 
 
