@@ -18,6 +18,15 @@ def export_json_object(dict_obj, filename=None, logging=True):
         True | False Boolean export status
 
     """
+    def is_tty():
+        """
+        Summary:
+            Determines if output is displayed to the screen or redirected
+        Returns:
+            True if tty terminal | False is redirected, TYPE: bool
+        """
+        return sys.stdout.isatty()
+
     try:
 
         if filename:
@@ -37,7 +46,8 @@ def export_json_object(dict_obj, filename=None, logging=True):
                     '%s: object in dict not serializable: %s' %
                     (inspect.stack()[0][3], str(e)))
 
-        else:
+        elif is_tty():
+
             json_str = json.dumps(dict_obj, indent=4, sort_keys=True)
 
             print(
@@ -47,10 +57,13 @@ def export_json_object(dict_obj, filename=None, logging=True):
                     formatters.TerminalFormatter()
                 ).strip()
             )
-
             if logging:
                 logger.info('%s: successful export to stdout' % inspect.stack()[0][3])
             return True
+
+        else:
+            # print output, but not to stdout; possibly commandline redirect
+            print(json.dumps(dict_obj, indent=4, sort_keys=True))
 
     except OSError as e:
         logger.critical(
