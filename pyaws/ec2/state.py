@@ -32,15 +32,15 @@ REGION = os.environ['AWS_DEFAULT_REGION']
 # -- declarations -------------------------------------------------------------
 
 
-def running_instances(region, profile=None, debug=False):
+def running_instances(region, profile=None, ids=False, debug=False):
     """
     Summary.
-
         Determines state of all ec2 machines in a region
 
     Returns:
         :running ec2 instances, TYPE: ec2 objects
-
+            OR
+        :running ec2 instance ids, TYPE: str
     """
     try:
         if profile and profile != 'default':
@@ -48,7 +48,11 @@ def running_instances(region, profile=None, debug=False):
             ec2 = session.resource('ec2', region_name=region)
         else:
             ec2 = boto3.resource('ec2', region_name=region)
+
         instances = ec2.instances.all()
+
+        if ids:
+            return [x.id for x in instances if x.state['Name'] == 'running']
 
     except ClientError as e:
         logger.exception(
@@ -65,14 +69,15 @@ def running_instances(region, profile=None, debug=False):
     return [x for x in instances if x.state['Name'] == 'running']
 
 
-def stopped_instances(region, profile=None, debug=False):
+def stopped_instances(region, profile=None, ids=False, debug=False):
     """
     Summary.
-
         Determines state of all ec2 machines in a region
 
     Returns:
-        :stopped ec2 instance ids, TYPE: ec2 objects
+        :stopped ec2 instances, TYPE: ec2 objects
+            OR
+        :stopped ec2 instance ids, TYPE: str
 
     """
     try:
@@ -81,7 +86,11 @@ def stopped_instances(region, profile=None, debug=False):
             ec2 = session.resource('ec2', region_name=region)
         else:
             ec2 = boto3.resource('ec2', region_name=region)
+
         instances = ec2.instances.all()
+
+        if ids:
+            return [x.id for x in instances if x.state['Name'] == 'stopped']
 
     except ClientError as e:
         logger.exception(
