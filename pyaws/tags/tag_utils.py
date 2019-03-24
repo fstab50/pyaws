@@ -33,6 +33,26 @@ def create_taglist(dict):
     return tags
 
 
+def create_tagdict(tags):
+    """
+    Summary.
+        Converts tag list to tag dict
+    Args:
+        :tags (list): k,v
+         pair
+        {
+            [
+                'Key': k1,
+                'Value': v1
+            ]
+        }
+    Returns:
+        :tags (dict): {k1: v1, k2: v2}
+        
+    """
+    return {x['Key']: x['Value'] for x in tags}
+
+
 def delete_tags(resourceIds, region, tags):
     """ Removes tags from an EC2 resource """
     client = boto3_session('ec2', region)
