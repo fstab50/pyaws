@@ -22,7 +22,8 @@ import platform
 import logging
 import inspect
 
-from pyaws import __version__
+from pyaws.utils import export_json_object
+from pyaws._version import __version__
 
 # globals
 MODULE_VERSION = '1.16'
