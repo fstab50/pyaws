@@ -13,6 +13,7 @@ Module Attributes:
         default for stsaval config files, includes config_dir (~/.stsaval)
 """
 
+import os
 import inspect
 import logging
 from pyaws.script_utils import get_os
@@ -34,7 +35,7 @@ def os_parityPath(path):
     if path.startswith('\\'):
         return 'C:' + path
     return path
-    
+
 
 try:
 
