@@ -22,7 +22,6 @@ import platform
 import logging
 import inspect
 
-from pyaws.utils import export_json_object
 from pyaws._version import __version__
 
 # globals
@@ -36,7 +35,7 @@ def debug_mode(header, data_object, debug=False, halt=False):
     if debug:
         print('\n  ' + str(header) + '\n')
         try:
-            export_json_object(data_object)
+            print(json.dumps(data_object, indent=4))
         except Exception:
             print(data_object)
         if halt:
