@@ -8,7 +8,6 @@ import subprocess
 import inspect
 import logging
 from shutil import which
-from pyaws.utils import stdout_message
 
 
 logger = logging.getLogger()
@@ -29,7 +28,7 @@ def awscli_region(profile_name):
     awscli = 'aws'
 
     if not which(awscli):
-        stdout_message(message='Unable to locate awscli')
+        print('Unable to locate awscli')
         return None
     else:
         cmd = awscli + ' configure get ' + profile_name + '.region'
