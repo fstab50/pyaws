@@ -5,13 +5,15 @@ Summary:
     User Input Manipulation
 
 """
+import os
+import sys
 import re
+import logging
 from string import ascii_lowercase
-from pyaws import logd
-from pyaws._version import __version__
+from pyaws import __version__
 
-
-logger = logd.getLogger(__version__)
+logger = logging.getLogger(__version__)
+logger.setLevel(logging.INFO)
 
 
 def bool_assignment(arg, patterns=None):
