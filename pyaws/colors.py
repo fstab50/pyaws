@@ -22,35 +22,35 @@ class Colors():
     AQUA = '\u001b[38;5;14m'
     PURPLE = '\033[95m'
     CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
+    DARK_CYAN = '\033[36m'
     BLUE = '\033[94m'
-    DARKBLUE = '\033[38;5;95;38;5;24m'
-    PUREBLUE = '\u001b[38;5;27m'
+    DARK_BLUE = '\033[38;5;95;38;5;24m'
+    PURE_BLUE = '\u001b[38;5;27m'
     GREEN = '\033[92m'
-    DARKGREEN = '\u001b[38;5;2m'
+    DARK_GREEN = '\u001b[38;5;2m'
     YELLOW = '\033[93m'
     RED = '\033[91m'
     ORANGE = '\033[38;5;95;38;5;214m'
     GOLD2 = '\033[38;5;95;38;5;136m'                    # yellow-orange, lighter than GOLD3
     GOLD3 = '\033[38;5;95;38;5;178m'                    # yellow-orange
     WHITE = '\033[37m'
-    WHITEGRAY = '\033[38;5;95;38;5;250m'                # white-gray
+    WHITE_GRAY = '\033[38;5;95;38;5;250m'                # white-gray
     LT1GRAY = '\033[38;5;95;38;5;245m'                  # light gray
     LT2GRAY = '\033[38;5;95;38;5;246m'
     LT3GRAY = '\u001b[38;5;249m'
-    DARKGRAY1 = '\033[90m'
-    DARKGRAY2 = '\033[38;5;95;38;5;8m'                  # darkest gray
+    DARK_GRAY1 = '\033[90m'
+    DARK_GRAY2 = '\033[38;5;95;38;5;8m'                  # darkest gray
 
     # bright colors
-    BRIGHTBLUE = '\033[38;5;51m'
-    BRIGHTCYAN = '\033[38;5;36m'
-    BRIGHTGREEN = '\033[38;5;95;38;5;46m'
-    BRIGHTPURPLE = '\033[38;5;68m'
-    BRIGHTRED = '\u001b[31;1m'
-    BRIGHTYELLOW = '\033[38;5;11m'
-    BRIGHTYELLOW2 = '\033[38;5;95;38;5;226m'
-    BRIGHTYELLOWGREEN = '\033[38;5;95;38;5;155m'
-    BRIGHTWHITE = '\033[38;5;15m'
+    BRIGHT_BLUE = '\033[38;5;51m'
+    BRIGHT_CYAN = '\033[38;5;36m'
+    BRIGHT_GREEN = '\033[38;5;95;38;5;46m'
+    BRIGHT_PURPLE = '\033[38;5;68m'
+    BRIGHT_RED = '\u001b[31;1m'
+    BRIGHT_YELLOW = '\033[38;5;11m'
+    BRIGHT_YELLOW2 = '\033[38;5;95;38;5;226m'
+    BRIGHT_YELLOWGREEN = '\033[38;5;95;38;5;155m'
+    BRIGHT_WHITE = '\033[38;5;15m'
 
     # background colors
     BKGND_BLACK = '\u001b[0m'
