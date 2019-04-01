@@ -25,6 +25,17 @@ logger.setLevel(logging.INFO)
 # --  project-level DEFAULTS  ------------------------------------------------
 
 
+def os_parityPath(path):
+    """
+    Converts unix paths to correct windows equivalents.
+    Unix native paths remain unchanged (no effect)
+    """
+    path = os.path.normpath(os.path.expanduser(path))
+    if path.startswith('\\'):
+        return 'C:' + path
+    return path
+    
+
 try:
 
     env_info = get_os(detailed=True)
