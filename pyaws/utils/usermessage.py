@@ -84,11 +84,11 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                 header = (Colors.YELLOW + '\t[ ' + Colors.RED + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
-            elif ( prefix or severity.upper() ) in warning_status:
+            elif (prefix or severity.upper()) in warning_status:
                 header = (Colors.YELLOW + '\t[ ' + Colors.ORANGE + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
-            elif prefix is 'OK' or prefix == 'OK':
+            elif prefix == 'OK':
                 header = (
                         Colors.YELLOW + '\t[  ' + Colors.BOLD + Colors.GREEN + prefix +
                         Colors.YELLOW + '  ]' + Colors.RESET + ': ')
@@ -98,7 +98,7 @@ def stdout_message(message, prefix='INFO', quiet=False, multiline=False, indent=
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
             else:    # default color scheme
-                header = (Colors.YELLOW + '\t[ ' + Colors.DARKCYAN + prefix +
+                header = (Colors.YELLOW + '\t[ ' + Colors.DARK_CYAN + prefix +
                           Colors.YELLOW + ' ]' + Colors.RESET + ': ')
 
             if multiline:
