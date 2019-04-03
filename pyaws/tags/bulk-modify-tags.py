@@ -109,8 +109,8 @@ def select_tags(tag_list, key_list):
             if key == tag['Key']:
                 select_list.append(tag)
     # ensure only tag-appropriate k,v pairs in list
-    clean = [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
-    return clean
+    return [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
+
 
 
 def get_instances(profile, rgn):
