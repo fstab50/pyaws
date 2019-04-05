@@ -30,6 +30,7 @@ def progress_meter(timer=30, delay=0.1, pattern='.', tabspaces=8, width=None):
     Args:
         :timer (int): runtime in seconds
         :pattern (str): Character to print in pattern
+        :tabspaces (int): lhs print margin, spaces
         :width (int): Width of pattern to print (columns)
         :delay (int): Delay between prints (seconds)
 
@@ -42,7 +43,7 @@ def progress_meter(timer=30, delay=0.1, pattern='.', tabspaces=8, width=None):
     tab = '\t'.expandtabs(tabspaces)
 
     if width is None:
-        stop = int(int(screen_dimensions2()[1]) / 2)
+        stop = int(int(screen_dimensions()[1]) / 2)
     else:
         stop = int(width)
 
