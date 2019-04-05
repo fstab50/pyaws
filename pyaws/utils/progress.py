@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 
@@ -11,7 +12,63 @@ except Exception:
     native = True           # use Linux native
 
 
-def screen_dimensions(width=True, height=False):
+def screen_dimensions():
+    """
+    Returns:
+        rows x columns, TYPE:  tuple (int, int)
+    """
+    rows, columns = os.popen('stty size', 'r').read().split()
+    return rows, columns
+
+
+def progress_meter(timer=30, delay=0.1, pattern='.', tabspaces=8, width=None):
+    """
+    Summary.
+
+        Graphical progress meter
+
+    Args:
+        :timer (int): runtime in seconds
+        :pattern (str): Character to print in pattern
+        :width (int): Width of pattern to print (columns)
+        :delay (int): Delay between prints (seconds)
+
+    Returns:
+        stdout pattern
+
+    """
+    t = 0
+    i = 0
+    tab = '\t'.expandtabs(tabspaces)
+
+    if width is None:
+        stop = int(int(screen_dimensions2()[1]) / 2)
+    else:
+        stop = int(width)
+
+    while t < (timer * int(1 / delay)):
+
+        if i == 0:
+            sys.stdout.write('{}{}'.format(tab, pattern))
+            time.sleep(delay)
+            sys.stdout.flush()
+
+        elif i > stop:
+            sys.stdout.write('\n{}{}'.format(tab, pattern))
+            sys.stdout.flush()
+            i = 0
+
+        else:
+            sys.stdout.write('%s' % pattern)
+            sys.stdout.flush()
+            time.sleep(delay)
+
+        # increment counter, timer
+        i += 1
+        t += 1
+
+
+def screen_d(width=True, height=False):
     """
     Summary.
 
@@ -38,38 +95,3 @@ def screen_dimensions(width=True, height=False):
     elif width and height:
         return int(cols), int(rows)
     return int(cols)
-
-
-def progress_meter(delay=0.1, pattern='.', width=None):
-    """
-    Summary.
-
-        Graphical progress meter
-
-    Args:
-        :pattern (str): Character to print in pattern
-        :width (int): Width of pattern to print (columns)
-        :delay (int): Delay between prints (seconds)
-
-    Returns:
-        stdout pattern
-
-    """
-    if width is None:
-        stop = int(screen_dimensions() / 3)
-    else:
-        stop = int(width)
-
-    for i in range(0, stop + 1):
-
-        if i == 0:
-            sys.stdout.write('\t%s' % pattern)
-            time.sleep(delay)
-
-        elif i > stop:
-            sys.stdout.write('\n')
-            i = 0
-
-        else:
-            sys.stdout.write('%s' % pattern)
-            time.sleep(delay)
