@@ -43,6 +43,9 @@ try:
     OS = env_info['os_type']
     user_home = env_info['HOME']
 
+    if user_home is None:
+        user_home = '/tmp'
+        
 except KeyError as e:
     logger.critical(
         '%s: %s variable is required and not found in the environment' %
