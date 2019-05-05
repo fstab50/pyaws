@@ -8,6 +8,7 @@
 """
 import os
 import sys
+import re
 import inspect
 
 
@@ -20,6 +21,7 @@ def packagename(filename):
 
 
 PACKAGE = packagename('DESCRIPTION.rst') or None
+pattern = re.compile('^\*\*Version\*\*')
 
 if PACKAGE is None:
     print('Problem executing post-commit-hook (%s). Exit' % __file__)
@@ -38,12 +40,18 @@ try:
                 newline = '  Version: ' + __version__ + '\n'
                 lines[index] = newline
                 break
+
+            elif pattern.match(line):
+                newline = '**Version**: ' + __version__ + '\n'
+                lines[index] = newline
+                break
+
         f1.close()
         with open('README.md', 'w') as f3:
             f3.writelines(lines)
 except OSError as e:
     print(
-            '%s: Error while reading or writing post-commit-hook' %
-            inspect.stack()[0][3]
+            '%s: Error while reading or writing post-commit-hook (%s)' %
+            (inspect.stack()[0][3], e)
         )
 sys.exit(0)
