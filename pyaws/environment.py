@@ -64,7 +64,7 @@ def set_environment():
 
     # set all env vars
     os.environ['DBUGMODE'] = 'False'
-    os.environ['AWS_DEFAULT_REGION'] = set_default_region()
+    os.environ['AWS_DEFAULT_REGION'] = set_default_region() or 'us-east-1'
 
     logger.info('AWS_DEFAULT_REGION determined as %s' % os.environ['AWS_DEFAULT_REGION'])
 
