@@ -2,7 +2,7 @@
 Summary:
     ANSI color and formatting code class
     See: http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
-    VERSION:  1.13
+    VERSION:  1.14
 Args:
     None
 
@@ -84,6 +84,7 @@ class Colors():
     REVERSE = '\033[;7m'
     RESET = '\033[0;0m'
     RESET_ALT = '\u001b[0m'
+    CLEARSCN = '\033[2J'
 
     # special formats
     URL = UNDERLINE + CYAN
