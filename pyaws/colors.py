@@ -2,7 +2,9 @@
 Summary:
     ANSI color and formatting code class
     See: http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html#256-colors
+
     VERSION:  1.14
+
 Args:
     None
 
@@ -11,6 +13,7 @@ Returns:
 
 Raises:
     None.  AttributeError if no code match returns the reset ansi codes
+
 """
 
 
