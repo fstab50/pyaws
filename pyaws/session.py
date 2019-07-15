@@ -99,6 +99,8 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
         client (boto3 object)
 
     """
+    fx = inspect.stack()[0][3]
+
     try:
 
         if (not profile or profile == 'default') and service != 'iam':
@@ -112,16 +114,19 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
             return session.client(service, region_name=region)
 
     except ClientError as e:
-        logger.exception(
-            "%s: IAM user or role not found (Code: %s Message: %s)" %
-            (inspect.stack()[0][3], e.response['Error']['Code'],
-             e.response['Error']['Message']))
-        raise
+        if e.response['Error']['Code'] == 'InvalidClientTokenId':
+            logger.warning(
+                '{}: Invalid credentials used by profile user {}'.format(fx, profile or 'default')
+            )
+
+        elif e.response['Error']['Code'] == 'ExpiredToken':
+            logger.info(
+                '%s: Expired temporary credentials detected for profile user (%s) [Code: %d]'
+                % (fx, profile, exit_codes['EX_CONFIG']['Code']))
+
     except ProfileNotFound:
-        msg = (
-            '%s: The profile (%s) was not found in your local config' %
-            (inspect.stack()[0][3], profile))
-        stdout_message(msg, 'FAIL')
+        msg = ('{}: Profile name {} was not found in your local config.'.format(fx, profile))
+        stdout_message(msg, 'WARN')
         logger.warning(msg)
     return boto3.client(service, region_name=region)
 
@@ -143,18 +148,22 @@ def authenticated(profile):
 
     except ClientError as e:
         if e.response['Error']['Code'] == 'InvalidClientTokenId':
-            logger.info(
+            logger.warning(
                 '%s: Invalid credentials to authenticate for profile user (%s). Exit. [Code: %d]'
                 % (inspect.stack()[0][3], profile, exit_codes['EX_NOPERM']['Code']))
+
         elif e.response['Error']['Code'] == 'ExpiredToken':
             logger.info(
                 '%s: Expired temporary credentials detected for profile user (%s) [Code: %d]'
                 % (inspect.stack()[0][3], profile, exit_codes['EX_CONFIG']['Code']))
+
         else:
             logger.exception(
                 '%s: Unknown Boto3 problem. Error: %s' %
                 (inspect.stack()[0][3], e.response['Error']['Message']))
     except Exception as e:
+        fx = inspect.stack()[0][3]
+        logger.exception('{}: Unknown error: {}'.format(fx, e))
         return False
     return False
 
@@ -163,9 +172,10 @@ def client_wrapper(service, profile='default', region=DEFAULT_REGION):
     """
     Summary.
 
-        call-once boto3 service wrapper, instantiates client object while
+        Single caller boto3 service wrapper. Instantiates client object while
         using temporary credientials for profile_name, if available in
-        local configuration. Tests authentication
+        local configuration. Tests authentication prior to returning any
+        client object.
 
     Args:
         :service (str): boto3 service abbreviation ('ec2', 's3', etc)
