@@ -85,7 +85,7 @@ setup(
     keywords='Amazon Web Services AWS iam ec2 lambda rds s3 sts',
     packages=find_packages(exclude=['docs', 'scripts', 'assets']),
     install_requires=requires,
-    python_requires='>=3.5, <4',
+    python_requires='>=3.6, <4',
     entry_points={
         'console_scripts': [
             'pyconfig=pyaws.cli:option_configure'
