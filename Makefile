@@ -100,6 +100,11 @@ test-install:  setup-venv ## Install (source: testpypi). Build artifacts exist
 	$(PIP_CALL) install -U $(PROJECT) --extra-index-url https://test.pypi.org/simple/
 
 
+.PHONY: source-install
+source-install:  clean  setup-venv  ## Install (source: local source). Build artifacts exist
+	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && 	$(PIP_CALL) install .
+
+
 .PHONY: update-src-install
 update-src-install:    ## Update Install (source: local source).
 	if [ -e $(VENV_DIR) ]; then \
