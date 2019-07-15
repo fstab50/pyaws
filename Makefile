@@ -1,5 +1,5 @@
 #
-#	Makefile, v1.7.0,  PROJECT:  pyaws
+#	Makefile, v1.7.3,  PROJECT:  pyaws
 #
 # --- declarations  --------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ VERSION_FILE = $(CUR_DIR)/$(PROJECT)/_version.py
 # --- rollup targets  ------------------------------------------------------------------------------
 
 
-.PHONY: fresh-install fresh-test-install deploy-test deploy-prod
+.PHONY: zero-source-install zero-test-install deploy-test deploy-prod
 
 zero-source-install: clean source-install   ## Install (source: local). Zero prebuild artifacts
 
@@ -61,9 +61,9 @@ test:     ## Run pytest unittests
 	else bash $(CUR_DIR)/scripts/make-test.sh $(CUR_DIR) $(VENV_DIR) $(MODULE_PATH); fi
 
 
-docs:  setup-venv    ## Generate sphinx documentation
+docs: clean setup-venv    ## Generate sphinx documentation
 	. $(VENV_DIR)/bin/activate && \
-	$(PIP_CALL) install sphinx sphinx_rtd_theme autodoc
+	$(PIP_CALL) install -r $(DOC_PATH)/requirements.txt
 	cd $(CUR_DIR) && $(MAKE) clean-docs
 	cd $(DOC_PATH) && . $(VENV_DIR)/bin/activate && $(MAKE) html
 
@@ -100,17 +100,15 @@ test-install:  setup-venv ## Install (source: testpypi). Build artifacts exist
 	$(PIP_CALL) install -U $(PROJECT) --extra-index-url https://test.pypi.org/simple/
 
 
-.PHONY: source-install
-source-install:  setup-venv  ## Install (source: local source). Build artifacts exist
-	cd $(CUR_DIR) && . $(VENV_DIR)/bin/activate && \
-	$(PIP_CALL) install .
-
-
-.PHONY: update-source-install
-update-source-install:    ## Update Install (source: local source).
+.PHONY: update-src-install
+update-src-install:    ## Update Install (source: local source).
 	if [ -e $(VENV_DIR) ]; then \
-	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3.6/site-packages/; \
- 	else @echo "No virtualenv built - nothing to update"; fi
+	cp -rv $(MODULE_PATH) $(VENV_DIR)/lib/python3*/site-packages/; fi
+
+
+.PHONY: rebuild-docs
+rebuild-docs:   ## Regenerate sphinx documentation
+	cd $(CUR_DIR)/docs && . $(VENV_DIR)/bin/activate && $(MAKE) html && cd $(CUR_DIR);
 
 
 .PHONY: help
