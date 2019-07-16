@@ -12,8 +12,6 @@ Module Functions:
         write a json object to a filesystem object
     - read_local_config:
         parse local config file
-    - config_init:
-        Initializes config file where none exists
 """
 import sys
 import os
@@ -21,7 +19,7 @@ import json
 import platform
 import logging
 import inspect
-
+from libtools import export_json_object
 from pyaws._version import __version__
 
 # globals

@@ -13,10 +13,9 @@ Module Attributes:
         default for stsaval config files, includes config_dir (~/.stsaval)
 """
 
-import os
 import inspect
 import logging
-from pyaws.script_utils import get_os
+from pyaws.script_utils import get_os, os_parityPath
 from pyaws._version import __version__
 
 logger = logging.getLogger(__version__)
@@ -24,17 +23,6 @@ logger.setLevel(logging.INFO)
 
 
 # --  project-level DEFAULTS  ------------------------------------------------
-
-
-def os_parityPath(path):
-    """
-    Converts unix paths to correct windows equivalents.
-    Unix native paths remain unchanged (no effect)
-    """
-    path = os.path.normpath(os.path.expanduser(path))
-    if path.startswith('\\'):
-        return 'C:' + path
-    return path
 
 
 try:
@@ -45,7 +33,7 @@ try:
 
     if user_home is None:
         user_home = '/tmp'
-        
+
 except KeyError as e:
     logger.critical(
         '%s: %s variable is required and not found in the environment' %
@@ -60,7 +48,7 @@ else:
 
     # logging parameters
     enable_logging = True
-    log_mode = 'FILE'
+    log_mode = 'STREAM'          # log to cloudwatch logs
     log_filename = PACKAGE + '.log'
     log_dir = os_parityPath(user_home + '/' + 'logs')
     log_path = os_parityPath(log_dir + '/' + log_filename)
@@ -81,3 +69,26 @@ else:
             "SYSLOG_FILE": False
         }
     }
+
+PACKAGE = 'pyaws'
+enable_logging = True
+
+log_filename = 'pyaws.log'
+log_dir = os.getenv('HOME') + '/logs'
+log_path = log_dir + '/' + log_filename
+
+
+log_config = {
+    "PROJECT": {
+        "PACKAGE": PACKAGE,
+        "CONFIG_VERSION": __version__,
+    },
+    "LOGGING": {
+        "ENABLE_LOGGING": enable_logging,
+        "LOG_FILENAME": log_filename,
+        "LOG_DIR": log_dir,
+        "LOG_PATH": log_path,
+        "LOG_MODE": log_mode,
+        "SYSLOG_FILE": False
+    }
+}
