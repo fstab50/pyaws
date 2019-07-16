@@ -3,11 +3,9 @@ pyaws.tags:  Tag Utilities
 """
 import json
 import inspect
-from pygments import highlight, lexers, formatters
 from functools import reduce
-import boto3
 from botocore.exceptions import ClientError
-from pyaws.session import authenticated, boto3_session
+from pyaws.session import boto3_session
 from pyaws import logger
 from pyaws import __version__
 
@@ -48,7 +46,7 @@ def create_tagdict(tags):
         }
     Returns:
         :tags (dict): {k1: v1, k2: v2}
-        
+
     """
     return {x['Key']: x['Value'] for x in tags}
 

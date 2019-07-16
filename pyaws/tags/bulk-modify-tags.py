@@ -21,16 +21,16 @@ Author:
 """
 
 import sys
-import loggers
+import argparse
 import inspect
 import datetime
 from time import sleep
-import json
-from pygments import highlight, lexers, formatters
 import boto3
 from botocore.exceptions import ClientError
+from libtools import export_json_object, stdout_message
+from pyaws import exit_codes, logger
 
-logger = loggers.getLogger('1.0')
+
 DEBUGMODE = True           # will not retag any resources
 SUMMARY_REPORT = True       # print summary report only
 VALID_TYPES = ['instances', 'volumes', 'display']
@@ -59,6 +59,7 @@ NO_COPY_LIST = [TAGKEY_BACKUP, TAGKEY_CPM, TAGKEY_SNOW_CPM, NETWORKER, NAME]
 
 # tags on ebs volumes to preserve and ensure we do not overwrite or rm
 PRESERVE_TAGS = ['Name']
+
 
 # -- declarations -------------------------------------------------------------
 
@@ -90,10 +91,7 @@ def valid_tags(tag_list):
 
 def pretty_print_tags(tag_list):
     """ prints json tags with syntax highlighting """
-    json_str = json.dumps(tag_list, indent=4, sort_keys=True)
-    print(highlight(
-        json_str, lexers.JsonLexer(), formatters.TerminalFormatter()
-        ))
+    export_json_object(tag_list)
     print('\n')
     return
 
@@ -110,7 +108,6 @@ def select_tags(tag_list, key_list):
                 select_list.append(tag)
     # ensure only tag-appropriate k,v pairs in list
     return [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
-
 
 
 def get_instances(profile, rgn):
@@ -322,6 +319,7 @@ def init_cli():
     configure keyup runtime parameters.   Exiting. Code: """
     logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['E_MISC']['Code']))
     print(failure)
+
 
 if __name__ == '__main__':
     start_time = datetime.datetime.now()
