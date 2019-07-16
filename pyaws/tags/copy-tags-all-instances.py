@@ -25,8 +25,7 @@ import loggers
 import inspect
 import datetime
 from time import sleep
-import json
-from pygments import highlight, lexers, formatters
+from libtools import export_json_object
 import boto3
 from botocore.exceptions import ClientError
 
@@ -89,10 +88,7 @@ def valid_tags(tag_list):
 
 def pretty_print_tags(tag_list):
     """ prints json tags with syntax highlighting """
-    json_str = json.dumps(tag_list, indent=4, sort_keys=True)
-    print(highlight(
-        json_str, lexers.JsonLexer(), formatters.TerminalFormatter()
-        ))
+    export_json_object(tag_list)
     print('\n')
     return
 
