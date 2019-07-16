@@ -7,12 +7,11 @@ from functools import reduce
 from botocore.exceptions import ClientError
 from pyaws.session import boto3_session
 from pyaws import logger
-from pyaws import __version__
 
 try:
-    from pyaws.core.oscodes_unix import exit_codes
+    from pyaws oscodes_unix import exit_codes
 except Exception:
-    from pyaws.core.oscodes_win import exit_codes    # non-specific os-safe codes
+    from pyaws oscodes_win import exit_codes    # non-specific os-safe codes
 
 
 def create_taglist(dict):

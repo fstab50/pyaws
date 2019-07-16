@@ -33,7 +33,6 @@ requires = [
     'awscli>=1.16.100'
     'boto3>=1.9.100',
     'botocore',
-    'Pygments',
     'libtools'
 ]
 

@@ -28,7 +28,7 @@ from time import sleep
 import boto3
 from botocore.exceptions import ClientError
 from libtools import export_json_object, stdout_message
-from pyaws import exit_codes, logger
+from pyaws import exit_codes, logger, local_config
 
 
 DEBUGMODE = True           # will not retag any resources
