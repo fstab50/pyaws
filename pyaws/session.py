@@ -128,6 +128,7 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
         msg = ('{}: Profile name {} was not found in your local config.'.format(fx, profile))
         stdout_message(msg, 'WARN')
         logger.warning(msg)
+        return None
     return boto3.client(service, region_name=region)
 
 

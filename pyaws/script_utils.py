@@ -19,7 +19,7 @@ import json
 import platform
 import logging
 import inspect
-from libtools import export_json_object
+from libtools.io import export_json_object
 from pyaws._version import __version__
 
 # globals

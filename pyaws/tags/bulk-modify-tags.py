@@ -27,7 +27,8 @@ import datetime
 from time import sleep
 import boto3
 from botocore.exceptions import ClientError
-from libtools import export_json_object, stdout_message
+from libtools.io import export_json_object
+from libtools import stdout_message
 from pyaws import exit_codes, logger, local_config
 
 

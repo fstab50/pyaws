@@ -25,7 +25,7 @@ import loggers
 import inspect
 import datetime
 from time import sleep
-from libtools import export_json_object
+from libtools.js import export_json_object
 import boto3
 from botocore.exceptions import ClientError
 
