@@ -19,7 +19,6 @@ import json
 import platform
 import logging
 import inspect
-from libtools.io import export_json_object
 from pyaws._version import __version__
 
 # globals
@@ -96,6 +95,8 @@ def config_init(config_file, json_config_obj, config_dirname=None):
     Returns:
         TYPE: bool, Success | Failure
     """
+    from libtools.io import export_json_object
+
     HOME = os.environ['HOME']
     # client config dir
     if config_dirname:
