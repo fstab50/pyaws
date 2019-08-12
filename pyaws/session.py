@@ -134,12 +134,14 @@ def boto3_session(service, region=DEFAULT_REGION, profile=None):
 
 def authenticated(profile):
     """
-    Summary:
         Tests generic authentication status to AWS Account
+
     Args:
         :profile (str): iam user name from local awscli configuration
+
     Returns:
         TYPE: bool, True (Authenticated)| False (Unauthenticated)
+
     """
     try:
         sts_client = boto3_session(service='sts', profile=profile)

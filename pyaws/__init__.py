@@ -26,6 +26,5 @@ try:
 
     from pyaws.core import exit_codes
 
-except Exception as e:
-    fx = inspect.stack()[0][3]
-    logger.exception('{}: Uknown failure during initialization of pyaws library: {e}'.format(fx, e))
+except Exception:
+    pass
