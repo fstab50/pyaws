@@ -1,7 +1,6 @@
 import inspect
 from pyaws._version import __version__ as version
 from pyaws import environment
-from pyaws.statics import local_config
 
 
 __author__ = 'Blake Huber'
@@ -17,6 +16,7 @@ __status__ = "Development"
 
 try:
 
+    from pyaws.statics import local_config
     from libtools import Colors
     from libtools import logd
 
