@@ -6,7 +6,7 @@
 
 * Python routines and tools for use with Amazon Web Services, etc
 
-  Version: 0.4.0
+  Version: 0.4.1
 
 
 * * *
