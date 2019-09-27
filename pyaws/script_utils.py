@@ -19,6 +19,7 @@ import json
 import platform
 import logging
 import inspect
+import distro
 from pyaws._version import __version__
 
 # globals
@@ -130,7 +131,7 @@ def get_os(detailed=False):
 
         if os_type == 'Linux':
             os_detail = platform.platform()
-            distribution = platform.linux_distribution()[0]
+            distribution = ' '.join(distro.linux_distribution()[:2])
             HOME = os.getenv('HOME')
             username = os.getenv('USER')
         elif os_type == 'Windows':

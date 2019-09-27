@@ -1,6 +1,7 @@
 awscli
 boto3
 botocore
+distro
 libtools
 python-dateutil
 pytz
