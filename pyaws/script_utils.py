@@ -125,9 +125,27 @@ def get_os(detailed=False):
         TYPE: dict object containing key, value pairs describing
         os information
     """
-    try:
+    def return_dict(extra, _os, _os_detail, linux_distro, user, home_dir):
+        if extra and _os == 'Linux':
+            return {
+                    'os_type': _os,
+                    'os_detail': _os_detail,
+                    'linux_distribution': linux_distro,
+                    'username': user,
+                    'HOME': home_dir
+                }
+        elif extra:
+            return {
+                    'os_type': _os,
+                    'os_detail': _os_detail,
+                    'username': user,
+                    'HOME': home_dir
+                }
+        return {'os_type': _os}
 
+    try:
         os_type = platform.system()
+        distribution, username, HOME = '', '', ''
 
         if os_type == 'Linux':
             os_detail = platform.platform()
@@ -144,30 +162,13 @@ def get_os(detailed=False):
             os_detail = 'unknown'
             HOME = os.getenv('HOME')
             username = os.getenv('USER')
-
     except OSError as e:
         raise e
     except Exception as e:
         logger.exception(
             '%s: problem determining local os environment %s' %
-            (inspect.stack()[0][3], str(e))
-            )
-    if detailed and os_type == 'Linux':
-        return {
-                'os_type': os_type,
-                'os_detail': os_detail,
-                'linux_distribution': distribution,
-                'username': username,
-                'HOME': HOME
-            }
-    elif detailed:
-        return {
-                'os_type': os_type,
-                'os_detail': os_detail,
-                'username': username,
-                'HOME': HOME
-            }
-    return {'os_type': os_type}
+            (inspect.stack()[0][3], str(e)))
+    return return_dict(detailed, os_type, os_detail, distribution, username, HOME)
 
 
 def import_file_object(filename):
