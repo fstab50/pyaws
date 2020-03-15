@@ -132,7 +132,7 @@ def sns_notification(topic_arn, subject, message, account_id=None, account_name=
             Message=json.dumps(msg_dict),
             MessageStructure='json'
         )
-        if response['ResponseMetadata']['HTTPStatusCode'].startswith('2'):
+        if str(response['ResponseMetadata']['HTTPStatusCode']).startswith('2'):
             return True
     except ClientError as e:
         logger.exception(
