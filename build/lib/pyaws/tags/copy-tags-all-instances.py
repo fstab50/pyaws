@@ -21,20 +21,17 @@ Author:
 """
 
 import sys
-import argparse
+import loggers
 import inspect
 import datetime
 from time import sleep
+from libtools.js import export_json_object
 import boto3
 from botocore.exceptions import ClientError
-from libtools.io import export_json_object
-from libtools import stdout_message
-from pyaws import exit_codes, logger, local_config
 
-
+logger = loggers.getLogger('1.0')
 DEBUGMODE = True           # will not retag any resources
-SUMMARY_REPORT = True       # print summary report only
-VALID_TYPES = ['instances', 'volumes', 'display']
+SUMMARY_REPORT = False       # print summary report only
 
 regions = ['ap-southeast-1', 'eu-west-1', 'us-east-1']
 
@@ -60,7 +57,6 @@ NO_COPY_LIST = [TAGKEY_BACKUP, TAGKEY_CPM, TAGKEY_SNOW_CPM, NETWORKER, NAME]
 
 # tags on ebs volumes to preserve and ensure we do not overwrite or rm
 PRESERVE_TAGS = ['Name']
-
 
 # -- declarations -------------------------------------------------------------
 
@@ -108,7 +104,8 @@ def select_tags(tag_list, key_list):
             if key == tag['Key']:
                 select_list.append(tag)
     # ensure only tag-appropriate k,v pairs in list
-    return [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
+    clean = [{'Key': x['Key'], 'Value': x['Value']} for x in select_list]
+    return clean
 
 
 def get_instances(profile, rgn):
@@ -123,15 +120,6 @@ def get_instances(profile, rgn):
     return vm_ids
 
 
-def get_volumes(profile, rgn):
-    """
-    returns all EC2 volume Ids in a region
-    """
-    session = boto3.Session(profile_name=profile, region_name=rgn)
-    client = session.client('ec2')
-    return [x['VolumeId'] for x in client.describe_volumes()['Volumes']]
-
-
 def calc_runtime(start, end):
     """ Calculates job runtime given start, end datetime stamps
     Args:
@@ -143,32 +131,6 @@ def calc_runtime(start, end):
         return (duration.seconds), 'seconds'
     else:
         return (duration.seconds / 60), 'minutes'
-
-
-def display_valid(print_object):
-    """
-    Help Function | Displays an attribute of this program
-    """
-    if print_object in ('list', 'print', 'display'):
-        print('\n' + VALID_TYPES + '\n')
-    return True
-
-
-def options(parser):
-    """
-    Summary:
-        parse cli parameter options
-    Returns:
-        TYPE: argparse object, parser argument set
-    """
-    parser.add_argument("-p", "--profile", nargs='?', default="default",
-                              required=False, help="type (default: %(default)s)")
-    parser.add_argument("-t", "--type", nargs='?', default='list', type=str,
-                        choices=VALID_TYPES, required=False)
-    parser.add_argument("-a", "--auto", dest='auto', action='store_true', required=False)
-    parser.add_argument("-d", "--debug", dest='debug', action='store_true', required=False)
-    parser.add_argument("-V", "--version", dest='version', action='store_true', required=False)
-    return parser.parse_args()
 
 
 # -- main ---------------------------------------------------------------------
@@ -185,8 +147,7 @@ def main():
             client = session.client('ec2')
             ec2 = session.resource('ec2')
             instances = get_instances(profile, region)
-            volumes = get_volumes(profile, region)
-            # print summary
+
             if SUMMARY_REPORT:
                 print('\nFor AWS Account %s, region %s, Found %d Instances\n' % (account, region, len(instances)))
                 continue
@@ -224,12 +185,8 @@ def main():
 
                             # AFTER tag copy | put Name tag back into apply tags, ie, after_tags
                             retain_tags = select_tags(instance.tags, PRESERVE_TAGS)
-<<<<<<< HEAD
-                            for tag in (*retain_tags, *filtered_tags):
-=======
                             all_tags = retain_tags + filtered_tags
                             for tag in all_tags:
->>>>>>> f2dbf96 (Refactor for python2.7)
                                 after_tags.append(tag)
                             logger.info('For InstanceID %s, the AFTER FILTERING list of %d tags is:' % (instance.id, len(after_tags)))
                             logger.info('Tags to apply are:')
@@ -271,60 +228,6 @@ def main():
                             e.response['Error']['Message'])
                         )
                     raise
-
-
-def init_cli():
-    # parser = argparse.ArgumentParser(add_help=False, usage=help_menu())
-    parser = argparse.ArgumentParser(add_help=False)
-
-    try:
-        args = options(parser)
-    except Exception as e:
-        help_menu()
-        stdout_message(str(e), 'ERROR')
-        sys.exit(exit_codes['EX_OK']['Code'])
-
-    if len(sys.argv) == 1:
-        help_menu()
-        sys.exit(exit_codes['EX_OK']['Code'])
-
-    elif args.help:
-        help_menu()
-        sys.exit(exit_codes['EX_OK']['Code'])
-
-    elif args.version:
-        package_version()
-
-    elif args.configure:
-        r = option_configure(args.debug, local_config['PROJECT']['CONFIG_PATH'])
-        return r
-    else:
-        if precheck():              # if prereqs set, run
-            if authenticated(profile=args.profile):
-                # execute keyset operation
-                success = main(
-                            operation=args.operation,
-                            profile=args.profile,
-                            user_name=args.username,
-                            auto=args.auto,
-                            debug=args.debug
-                            )
-                if success:
-                    logger.info('IAM access keyset operation complete')
-                    sys.exit(exit_codes['EX_OK']['Code'])
-            else:
-                stdout_message(
-                    'Authenication Failed to AWS Account for user %s' % args.profile,
-                    prefix='AUTH',
-                    severity='WARNING'
-                    )
-                sys.exit(exit_codes['E_AUTHFAIL']['Code'])
-
-    failure = """ : Check of runtime parameters failed for unknown reason.
-    Please ensure local awscli is configured. Then run keyconfig to
-    configure keyup runtime parameters.   Exiting. Code: """
-    logger.warning(failure + 'Exit. Code: %s' % sys.exit(exit_codes['E_MISC']['Code']))
-    print(failure)
 
 
 if __name__ == '__main__':

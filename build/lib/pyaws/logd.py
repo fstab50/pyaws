@@ -51,13 +51,9 @@ def logging_prep(mode):
                 Path(log_path).touch(mode=0o644, exist_ok=True)
 
     except OSError as e:
-<<<<<<< HEAD
-        syslog.exception(f'{inspect.stack()[0][3]}: Failure while seeding log file path: {e}')
-=======
         syslog.exception(
             '{i}: Failure while seeding log file path: {e}'.format(
                 i=inspect.stack()[0][3], e=e))
->>>>>>> f2dbf96 (Refactor for python2.7)
         return False
     return True
 
@@ -116,12 +112,8 @@ def getLogger(*args, **kwargs):
                     logger.setLevel(logging.DEBUG)
 
                 else:
-<<<<<<< HEAD
-                    syslog.warning(f'{inspect.stack()[0][3]}: Log preparation fail - exit')
-=======
                     syslog.warning('{i}: Log preparation fail - exit'.format(
                         i=inspect.stack()[0][3]))
->>>>>>> f2dbf96 (Refactor for python2.7)
                     sys.exit(1)
 
             elif mode_assignment(log_mode) == 'STREAM':
