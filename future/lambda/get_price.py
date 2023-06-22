@@ -29,7 +29,6 @@ INDEXURL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json"
 url_prefix = "https://pricing.us-east-1.amazonaws.com"
 
 
-
 def export_json_object(dict_obj, filename=None):
     """
     Summary:

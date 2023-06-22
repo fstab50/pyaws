@@ -36,7 +36,7 @@ def _profile_prefix(profile, prefix='gcreds'):
     tempProfile = prefix + '-' + profile
 
     try:
-         if subprocess.check_output(
+        if subprocess.check_output(
             'aws configure get profile.{profile}.aws_access_key_id {stderr}'.format(
                 profile=profile, stderr=stderr)):
             return profile
