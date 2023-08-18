@@ -132,13 +132,11 @@ def sns_notification(topic_arn, subject, message, account_id=None, account_name=
             Message=json.dumps(msg_dict),
             MessageStructure='json'
         )
-        if response['ResponseMetadata']['HTTPStatusCode'] == '200':
+        if str(response['ResponseMetadata']['HTTPStatusCode']).startswith('2'):
             return True
-        else:
-            return False
     except ClientError as e:
         logger.exception(
             '%s: problem sending sns msg (Code: %s Message: %s)' %
             (inspect.stack()[0][3], e.response['Error']['Code'],
                 e.response['Error']['Message']))
-        return False
+    return False
