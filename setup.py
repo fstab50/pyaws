@@ -30,8 +30,8 @@ import pyaws
 
 
 requires = [
-    'awscli>=1.16.100'
-    'boto3>=1.9.100',
+    'awscli'
+    'boto3',
     'botocore',
     'libtools>=0.2.5',
     'distro>=1.4.0'
