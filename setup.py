@@ -33,8 +33,8 @@ requires = [
     'awscli'
     'boto3',
     'botocore',
-    'libtools>=0.2.5',
-    'distro>=1.4.0'
+    'libtools',
+    'distro'
 ]
 
 
