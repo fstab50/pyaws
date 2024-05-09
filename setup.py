@@ -30,7 +30,7 @@ import pyaws
 
 
 requires = [
-    'awscli'
+    'awscli',
     'boto3',
     'botocore',
     'libtools',
